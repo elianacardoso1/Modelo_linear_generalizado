@@ -1,0 +1,337 @@
+---
+title: "Trabalho MLG"
+subtitle: ""
+author: "Eliana Cardoso Gonçalves"
+date: "05/25/2024"
+date-format: short # formatacao dd/mm/aaaa
+lang: pt #linguagem
+toc: true # indice
+number-sections: true
+fig-cap-location: top #localizacao titulo figura 
+geometry:
+      - top=3cm
+      - left=3cm
+      - right=2cm
+      - bottom=2cm
+tbl-cap-location: top
+df-print: kable ## saida dos data frames serem kable
+fig-width: 10
+fig-height: 4
+format: 
+  html:
+    self-contained: true # tornar o html compartilhavel
+    theme: flatly
+  pdf: 
+    documentclass: scrreprt
+  docx: default
+editor: source
+editor_options:
+  chunk_output_type: console
+output: 
+  pdf_document:
+    margin: 1in
+    df_print:
+      digits: 3
+  word_document:
+      fig_caption: true
+      df_print: kable
+prefer-html: true
+execute:
+  echo: false
+  warning: false
+---
+```{r}
+rm(list = ls())
+```
+
+```{r,biblioteca}
+
+library(corrplot)
+# bases de dados diversas
+library(haven)
+# gráficos diversos
+library(ggplot2)
+# manipulação de bases de dados
+library(tidyverse)
+# análise de regressão
+library(performance)
+library(see)
+library(car)
+library(knitr)
+library(kableExtra)
+library(patchwork)
+library(reglin)
+library(summarytools)
+```
+
+
+```{r,diretorio}
+
+setwd("C:/Users/cardo/OneDrive/Documents/Estatística/7 período/mlg/Módulo 1. Modelos Lineares Normal, Poisson e Logístico-20240525/code")
+source("_src/src.R")
+
+```
+
+```{r}
+dta = read_dta("_dta/pwt1001.dta")
+# filtrando para 2014
+dta = dta %>% subset(year == '2014')
+```
+
+
+
+
+## Introdução
+
+A análise macroeconômica é fundamental para entender o desenvolvimento econômico e social dos países. No contexto da contabilidade nacional, variáveis como o Produto Interno Bruto (PIB), a força de trabalho e o estoque de capital são essenciais para avaliar a produtividade e o crescimento econômico. Este estudo utiliza dados da Penn World Table de 2020 para investigar a relação entre essas variáveis.
+
+O PIB nacional \(Y\), medido em dólares PPC de 2014, é uma medida abrangente da atividade econômica de um país. A força de trabalho \(L\) representa o total de pessoas empregadas ou em busca de emprego, refletindo a capacidade produtiva humana. O estoque de capital \(K\), também medido em dólares PPC de 2014, indica o valor total dos ativos produtivos de um país, como máquinas, edifícios e infraestrutura.
+
+
+
+Ao analisar essas variáveis, o objetivo é fornecer insights sobre as políticas econômicas que podem fomentar o crescimento e a produtividade. Esta investigação pode ajudar formuladores de políticas, economistas e pesquisadores a identificar áreas-chave para intervenção e investimento, promovendo um desenvolvimento econômico sustentável e inclusivo.
+
+## Metodologia
+
+Este estudo se concentra em uma amostra de 144 países distintos no ano de 2014, utilizando um modelo linear normal para explorar como a força de trabalho e o estoque de capital influenciam o PIB. A regressão linear múltipla será empregada para estimar os coeficientes que quantificam essas relações, permitindo-nos compreender melhor os determinantes do crescimento econômico.
+
+Essa relação pode ser expressa pela seguinte equação:
+
+Y=β0​+β1​X1​+β2​X2​+...+βp​Xp​+ε
+
+Onde:
+
+Y é a variável dependente ( PIB Nacional (Y) em dólares PPP de 2014).
+
+X1​,X2​,...,Xp​ são as variáveis independentes ( Força de Trabalho (L)e o Estoque de Capital (K) em dólares PPP de 2014).
+
+
+β1​,β2​,...,βp​ são os coeficientes de regressão que representam os efeitos das variáveis independentes na variável dependente.
+
+ε é o termo de erro, que representa a variação não explicada pelo modelo.
+
+
+Para garantir a robustez e confiabilidade dos resultados, optei por realizar uma transformação log-log nas variáveis, considerando que o PIB Nacional (Y) em dólares PPP de 2014, juntamente com as variáveis independentes "força de trabalho" e "estoque de capital", não apresentam uma distribuição normal. Essa abordagem vai permitir que  aos pressupostos do modelo normal sejam atendidos e obter resultados mais consistentes.
+
+Ao aplicar a transformação log-log, estamos ajustando a distribuição das variáveis para se adequarem melhor ao modelo, mitigando quaisquer distorções ou viés que possam surgir devido à falta de normalidade. Isso nos permite realizar inferências estatísticas mais confiáveis e interpretar os efeitos das variáveis independentes sobre o PIB Nacional de forma mais precisa.
+
+Essa estratégia de transformação aumenta a robustez da análise, pois reduz a influência de valores extremos e torna os resultados menos sensíveis a distribuições não normais. Portanto, podemos ter maior confiança nas conclusões derivadas do modelo, garantindo uma abordagem metodológica sólida e resultados mais confiáveis para tomada de decisão.
+
+## Análise Descritiva
+```{r}
+
+## criando as variáveis de interesse
+# definindo as variáveis
+dta$Y = dta$rgdpo
+dta$L = dta$emp*dta$hc
+dta$K = dta$rnna
+# rearranjando colunas
+dta = dta %>% relocate(Y, .after = year)
+dta = dta %>% relocate(L, .after = Y)
+dta = dta %>% relocate(K, .after = K)
+# filtrando NAs
+df.complete = dta[, c('Y', 'L', 'K')] %>% na.omit()
+dta = merge(df.complete, dta, all.x = TRUE)
+
+
+```
+
+
+```{r}
+#| label: tbl-t1
+#| tbl-cap: Tabela Resumo das Variáveis Y, L e K.
+
+
+descr_stats <- descr(dta[, c('Y', 'L', 'K')], 
+                     stats = c("mean", "sd", "min", "med", "max"), 
+                     transpose = FALSE, 
+                     headings = FALSE)
+
+# Convertendo para um dataframe para facilitar a manipulação
+descr_df <- as.data.frame(descr_stats)
+
+# Adicionando a coluna de Estatísticas
+descr_df <- descr_df %>%
+  select( everything())
+
+# Exibindo a tabela formatada em markdown
+library(knitr)
+kable(descr_df, format = "markdown")
+
+```
+
+
+```{r}
+
+#| label: grafico_Y
+#| fig-cap: Histograma PIB Nacional (Y) em dólares PPP de 2014
+## histograma Y (usando base::plot)
+
+
+hist_data = hist(dta$Y, xlab = 'Y', main = '', col = 'lightblue')
+# dist. normal (p/ comparação)
+x_values = seq(min(dta$Y), max(dta$Y), length = 100)
+y_values = dnorm(x_values, mean = mean(dta$Y), sd = sd(dta$Y)) 
+y_values = y_values * diff(hist_data$mids[1:2]) * length(dta$Y) 
+lines(x_values, y_values, lwd = 2)
+
+
+
+```
+
+
+Observando o  @grafico_Y  e @tbl-t1 , o valor mínimo do PIB é $2.569, enquanto o valor máximo é significativamente maior, chegando a $18.244.220, indicando uma grande variação no PIB entre os países da amostra.A média do PIB é $769.941, o que é substancialmente maior que a mediana de $123.419, sugerindo que alguns países com PIB muito alto estão puxando a média para cima. A distribuição do PIB é bastante assimétrica, com muitos países tendo PIBs relativamente baixos e poucos países com PIBs muito altos.
+
+
+
+```{r}
+
+#| label: grafico-L
+#| fig-cap: Histograma Força de Trabalho (L)
+
+
+## histograma L
+# invocando ggplot
+p = ggplot(dta, aes(x = L)) +
+  # histograma
+  geom_histogram(aes(x = L, after_stat(density)), fill = 'lightblue', col = 'black', bins = 10) +
+  # dist. normal (p/ comparação)
+  stat_function(fun = dnorm,
+                args = list(mean = mean(dta$L), sd = sd(dta$L))) + 
+  # label eixo x
+  xlab('L') +
+  # label eixo y
+  ylab('Density') +
+  # tema do plot
+  theme(
+    # painel
+    panel.background = element_blank(),
+    panel.border = element_blank(),
+    # eixos
+    axis.line.x = element_line(linewidth = 0.5, linetype = "solid", colour = "black"),
+    axis.line.y = element_line(linewidth = 0.5, linetype = "solid", colour = "black")
+  )
+p
+
+```
+
+
+
+
+Analisando o @grafico-L  e a @tbl-t1, a variação da força de trabalho de 0,2994 a 2.045,91 reflete uma grande disparidade na população economicamente ativa entre os países. Com uma média de 54,60 e uma mediana de 11,65, a distribuição mostra-se assimétrica, sugerindo a presença de países com forças de trabalho extremas, seja pela sua grandeza ou pequenez em relação à média da amostrm alguns países com países com a força de trabalho outlier.
+
+
+```{r}
+#| fig-cap: Histograma Estoque de Capital (K) em dólares PPP de 2014)
+#| label: grafico-K
+
+
+## histograma K
+# invocando ggplot
+p = ggplot(dta, aes(x = K)) +
+  # histograma
+  geom_histogram(aes(x = K, after_stat(density)), fill = 'lightblue', col = 'black', bins = 10) +
+  # dist. normal (p/ comparação)
+  stat_function(fun = dnorm,
+                args = list(mean = mean(dta$K), sd = sd(dta$K))) + 
+  # label eixo x
+  xlab('K') +
+  # label eixo y
+  ylab('Density') +
+  # tema do plot
+  theme(
+    # painel
+    panel.background = element_blank(),
+    panel.border = element_blank(),
+    # eixos
+    axis.line.x = element_line(linewidth = 0.5, linetype = "solid", colour = "black"),
+    axis.line.y = element_line(linewidth = 0.5, linetype = "solid", colour = "black")
+  )
+p
+
+```
+
+
+Analisando os valores da @tbl-t1 e @grafico-K, Observamos que o estoque de capital varia amplamente, de $7.345 a $64.118.472, indicando diferenças significativas no nível de investimento em capital produtivo entre os países.
+
+A média do estoque de capital é $3.058.761, consideravelmente maior que a mediana de $394.841, o que sugere que alguns países têm estoques de capital extremamente altos que estão elevando a média.
+
+## Regressão Normal
+```{r}
+#| label: tbl-t2
+#| tbl-cap: Ajuste do Modelo de Regressão Normal com transformação
+
+fit = lm(log(Y) ~ log(L) + log(K), data = dta)
+# resultados
+interpreta <- function(mod, alpha = 0.05) {
+  tab <- summary(mod)
+  tabela <- as.data.frame(coef(tab))
+  tabela <- cbind(Covariavel = rownames(tabela), tabela)
+  tabela <- tabela %>%
+    mutate(
+      Estimação = Estimate,
+      Pvalor = `Pr(>|t|)`,
+      sig = case_when(
+        is.na(`Pr(>|t|)`) ~ " ",
+        `Pr(>|t|)` < 0.001 ~ "<0.001***",
+         `Pr(>|t|)` <= alpha ~ paste0(" ", format(`Pr(>|t|)`, digits = 3), "*"),
+        TRUE ~ paste0(" ", format(`Pr(>|t|)`, digits = 3))
+      )
+    ) %>%
+    select( Estimação, Pvalor, sig)
+  
+  return(tabela)
+}
+
+
+
+  
+
+fit %>% interpreta()                           
+```
+
+
+Todos os valores-p associados aos coeficientes são muito pequenos (<0.001), o que significa que podemos rejeitar a hipótese nula para todos os coeficientes, ao nível de 5% de confiança. Isso indica que tanto a força de trabalho quanto o estoque de capital têm efeitos significativos no PIB, conforme medido pelo logaritmo.
+
+
+O coeficiente estimado para log(K) é 0,70728. Isso significa que, se o estoque de capital (𝐾) aumentar em 1%, o PIB (𝑌) aumentará em aproximadamente 0.70728 × 100 = 70.728 , mantendo todas as outras variáveis constantes.
+
+
+O coeficiente estimado para log ⁡ ( 𝐿 )  é ,.29. Isso significa que, se a força de trabalho ( L) aumentar em 1%, o PIB (𝑌) aumentará em aproximadamente 0,29 × 100 =29,409, mantendo todas as outras variáveis constantes.
+
+Além disso, o modelo tem um R-quadrado ajustado de aproximadamente 0,96, o que significa que aproximadamente 95,92% da variabilidade no logaritmo do PIB pode ser explicada pelas variáveis independentes incluídas no modelo.
+
+Esses resultados sugerem que tanto a força de trabalho quanto o estoque de capital têm um impacto significativo no PIB, conforme medido pelo logaritmo.
+
+## Apêndice 
+
+```{r}
+#| label: tbl-t3
+#| fig-cap: Grafico de Análise de resíduos 
+
+ggresiduals(fit)
+#testResiduals(fit)
+```
+
+
+
+Com base na análise da tabela @tbl-t3, podemos concluir o seguinte sobre o ajuste do modelo de regressão:
+
+**Homocedasticidade:**
+   - A variância dos resíduos parece ser constante em toda a faixa dos valores ajustados, o que é consistente com a suposição de homocedasticidade na regressão linear.
+
+**Normalidade:**
+   - Embora o teste de Shapiro-Wilk sugira que os resíduos não sigam uma distribuição normal, desconsiderando caudas pesadas tanto nos extremos inferiores quanto nos superiores, podemos aproximar que os resíduos estão próximos de uma distribuição normal.
+
+**Independência dos Resíduos:**
+   - Tanto o teste de Durbin-Watson quanto a inspeção do gráfico de resíduos versus valores ajustados na tabela @tbl-t3 não fornecem evidências significativas para rejeitar a hipótese nula de ausência de autocorrelação positiva ou negativa nos resíduos. Assim, parece que os resíduos são independentes entre si.
+
+**Linearidade:**
+   - Não há um padrão claro nos resíduos plotados em relação aos valores ajustados, indicando linearidade entre as variáveis independentes e dependentes.
+
+Em resumo, o modelo de regressão parece atender às suposições de homocedasticidade, normalidade aproximada dos resíduos, independência dos resíduos e linearidade entre as variáveis.
+
+
+
+
+
