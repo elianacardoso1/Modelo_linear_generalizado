@@ -1,0 +1,12 @@
+
+Linear hypothesis test
+
+Hypothesis:
+log(L)  + log(K) = 1
+
+Model 1: restricted model
+Model 2: log(Y) ~ log(L) + log(K)
+
+  Res.Df    RSS Df Sum of Sq     F Pr(>F)
+1    142 21.930                          
+2    141 21.925  1 0.0048175 0.031 0.8605
