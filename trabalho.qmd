@@ -63,6 +63,9 @@ library(kableExtra)
 library(patchwork)
 library(reglin)
 library(summarytools)
+library(caret)
+library(pROC)
+
 ```
 
 
@@ -72,20 +75,10 @@ source("_src/src.R")
 
 ```
 
-```{r}
-dta = read_dta("_dta/pwt1001.dta")
-# filtrando para 2014
-dta = dta %>% subset(year == '2014')
-```
-
 
 ## Introdução
 
-A análise macroeconômica é fundamental para entender o desenvolvimento econômico e social dos países. No contexto da contabilidade nacional, variáveis como o Produto Interno Bruto (PIB), a força de trabalho e o estoque de capital são essenciais para avaliar a produtividade e o crescimento econômico. Este estudo utiliza dados da Penn World Table de 2020 para investigar a relação entre essas variáveis.
 
-O PIB nacional \(Y\), medido em dólares PPC de 2014, é uma medida abrangente da atividade econômica de um país. A força de trabalho \(L\) representa o total de pessoas empregadas ou em busca de emprego, refletindo a capacidade produtiva humana. O estoque de capital \(K\), também medido em dólares PPC de 2014, indica o valor total dos ativos produtivos de um país, como máquinas, edifícios e infraestrutura.
-
-Ao analisar essas variáveis, o objetivo é fornecer insights sobre as políticas econômicas que podem fomentar o crescimento e a produtividade. Esta investigação pode ajudar formuladores de políticas, economistas e pesquisadores a identificar áreas-chave para intervenção e investimento, promovendo um desenvolvimento econômico sustentável e inclusivo.
 
 ## Metodologia
 
@@ -113,9 +106,26 @@ Ao aplicar a transformação log-log, estamos ajustando a distribuição das var
 
 Essa estratégia de transformação aumenta a robustez da análise, pois reduz a influência de valores extremos e torna os resultados menos sensíveis a distribuições não normais. Portanto, podemos ter maior confiança nas conclusões derivadas do modelo, garantindo uma abordagem metodológica sólida e resultados mais confiáveis para tomada de decisão.
 
-## Análise Descritiva
-```{r}
+# Resultados
 
+## Modelo Linear Normal
+
+A análise macroeconômica é fundamental para entender o desenvolvimento econômico e social dos países. No contexto da contabilidade nacional, variáveis como o Produto Interno Bruto (PIB), a força de trabalho e o estoque de capital são essenciais para avaliar a produtividade e o crescimento econômico. Este estudo utiliza dados da Penn World Table de 2020 para investigar a relação entre essas variáveis.
+
+O PIB nacional \(Y\), medido em dólares PPC de 2014, é uma medida abrangente da atividade econômica de um país. A força de trabalho \(L\) representa o total de pessoas empregadas ou em busca de emprego, refletindo a capacidade produtiva humana. O estoque de capital \(K\), também medido em dólares PPC de 2014, indica o valor total dos ativos produtivos de um país, como máquinas, edifícios e infraestrutura.
+
+Ao analisar essas variáveis, o objetivo é fornecer insights sobre as políticas econômicas que podem fomentar o crescimento e a produtividade. Esta investigação pode ajudar formuladores de políticas, economistas e pesquisadores a identificar áreas-chave para intervenção e investimento, promovendo um desenvolvimento econômico sustentável e inclusivo.
+
+### Análise Descritiva
+
+```{r}
+dta = read_dta("_dta/pwt1001.dta")
+# filtrando para 2014
+dta = dta %>% subset(year == '2014')
+```
+
+
+```{r}
 ## criando as variáveis de interesse
 # definindo as variáveis
 dta$Y = dta$rgdpo
@@ -213,7 +223,6 @@ p
 
 
 
-
 Analisando o @grafico-L  e a @tbl-t1, a variação da força de trabalho de 0,2994 a 2.045,91 reflete uma grande disparidade na população economicamente ativa entre os países. Com uma média de 54,60 e uma mediana de 11,65, a distribuição mostra-se assimétrica, sugerindo a presença de países com forças de trabalho extremas, seja pela sua grandeza ou pequenez em relação à média da amostrm alguns países com países com a força de trabalho outlier.
 
 
@@ -252,7 +261,8 @@ Analisando os valores da @tbl-t1 e @grafico-K, Observamos que o estoque de capit
 
 A média do estoque de capital é $3.058.761, consideravelmente maior que a mediana de $394.841, o que sugere que alguns países têm estoques de capital extremamente altos que estão elevando a média.
 
-## Regressão Normal
+### Regressão Normal
+
 ```{r}
 #| label: tbl-t2
 #| tbl-cap: Ajuste do Modelo de Regressão Normal com transformação
@@ -292,14 +302,187 @@ Todos os valores-p associados aos coeficientes são muito pequenos (<0.001), o q
 
 O coeficiente estimado para log(K) é 0,70728. Isso significa que, se o estoque de capital (𝐾) aumentar em 1%, o PIB (𝑌) aumentará em aproximadamente 0.70728 × 100 = 70.728 , mantendo todas as outras variáveis constantes.
 
-
 O coeficiente estimado para log ⁡ ( 𝐿 )  é ,.29. Isso significa que, se a força de trabalho ( L) aumentar em 1%, o PIB (𝑌) aumentará em aproximadamente 0,29 × 100 =29,409, mantendo todas as outras variáveis constantes.
 
 Além disso, o modelo tem um R-quadrado ajustado de aproximadamente 0,96, o que significa que aproximadamente 95,92% da variabilidade no logaritmo do PIB pode ser explicada pelas variáveis independentes incluídas no modelo.
 
 Esses resultados sugerem que tanto a força de trabalho quanto o estoque de capital têm um impacto significativo no PIB, conforme medido pelo logaritmo.
 
-## Apêndice 
+
+## Modelo Logistico
+
+Utilizamos uma base de dados obtida do Kaggle para realizar uma análise de classificação de crédito. A tarefa principal é construir um modelo de machine learning capaz de classificar o crédito dos clientes de uma instituição financeira em diferentes faixas de risco, a fim de otimizar os processos de decisão e reduzir esforços manuais.
+
+A base de dados contém 50.000 observações e 27 variáveis que fornecem informações detalhadas sobre os clientes, incluindo idade, ocupação, renda anual, número de contas bancárias, histórico de atrasos em pagamentos, entre outras características financeiras. O objetivo principal é prever a classificação de crédito dos indivíduos, segmentando-os em categorias como "Poor" e "Good".
+
+Como parte da análise, será explorado o ajuste do modelo de regressão logística, focando na avaliação dos resíduos para verificar a adequação do modelo. Além disso, serão analisados os Fatores de Inflação da Variância (VIF) para cada preditor, a fim de identificar possíveis problemas de multicolinearidade e seu impacto na significância das associações estimadas.
+
+```{r}
+## carregando dados: base teste (Kaggle)
+## - os dados são carregados no objeto "dta"
+dta_teste = read.csv('_dta/test.csv') #credit_scoring
+dta_treino = read.csv('_dta/train.csv')
+
+glimpse(dta_treino)
+
+```
+
+
+```{r}
+# Limpeza da base
+# Selecionando variáveis necessárias
+dta <- subset(dta_treino, select = c(Credit_Score,Credit_Mix, Outstanding_Debt, Payment_of_Min_Amount, Changed_Credit_Limit))
+
+# Checando valores ausentes
+valores_faltantes <-data.frame(sort(colSums(is.na(dta)), decreasing = TRUE))
+
+# Preparando a variável dependente
+dta = dta %>% dplyr::filter(Credit_Score != "Standard")
+
+dta$Credit_Score <- factor(dta$Credit_Score, levels = c('Good', 'Poor'))
+
+# Preparando preditores contínuos
+dta$Outstanding_Debt <- as.numeric(str_extract(dta$Outstanding_Debt, "[0-9.]+"))
+dta <- dta[which(dta$Changed_Credit_Limit != "_"), ]
+dta$Changed_Credit_Limit <- as.numeric(dta$Changed_Credit_Limit)
+
+# Preparando preditores categóricos
+dta <- dta[which(dta$Credit_Mix != "_"), ]
+dta$Credit_Mix <- factor(dta$Credit_Mix, levels = c('Good', 'Standard', 'Bad'))
+dta <- dta[which(dta$Payment_of_Min_Amount != "NM"), ]
+dta$Payment_of_Min_Amount <- factor(dta$Payment_of_Min_Amount, levels = c('No', 'Yes'))
+
+# Análise descritiva
+summary(dta)
+summary(dta[, c('Outstanding_Debt', 'Changed_Credit_Limit')])
+
+```
+
+
+```{r}
+# Análise associativa preliminar
+boxplot(Outstanding_Debt ~ Credit_Score, data = dta)
+boxplot(Changed_Credit_Limit ~ Credit_Score, data = dta)
+chisq.test(x = dta$Credit_Mix, y = dta$Credit_Score)
+chisq.test(x = dta$Payment_of_Min_Amount, y = dta$Credit_Score)
+
+```
+
+
+
+```{r}
+# Modelo de regressão logística
+out <- glm(Credit_Score ~ Credit_Mix + Outstanding_Debt + Payment_of_Min_Amount + Changed_Credit_Limit, family = binomial(link = logit), data = dta)
+summary(out)
+```
+
+### Análise dos Resíduos
+
+Ao analisar os resíduos do modelo logístico ajustado para prever a classificação de crédito dos indivíduos, observamos que a deviance residual é de 24.833 com 32.070 graus de liberdade, comparada à deviance nula de 42.604 com 32.075 graus de liberdade. A redução significativa na deviance indica que o modelo ajusta-se bem aos dados, sugerindo que os preditores selecionados têm um impacto relevante na previsão da variável resposta. Contudo, uma análise mais detalhada dos resíduos seria necessária para confirmar a ausência de padrões não modelados e avaliar possíveis violações das suposições do modelo.
+
+### Análise do VIF (Variance Inflation Factor)
+
+Para avaliar a multicolinearidade entre os preditores do modelo, foi realizado o cálculo do VIF para cada variável. A análise dos erros padrão associados aos coeficientes do modelo mostrou que:
+
+- Credit_MixStandard: Estimativa de 1,010 com erro padrão de 0,07013.
+- Credit_MixBad: Estimativa de 2,345 com erro padrão de 0,1036.
+- Outstanding_Debt: Estimativa de 0,0006567 com erro padrão de 0,00002935.
+- Payment_of_Min_AmountYes: Estimativa de 1,423 com erro padrão de 0,08047.
+- Changed_Credit_Limit: Estimativa de -0,02382 com erro padrão de 0,003673.
+
+O impacto da multicolinearidade, conforme indicado pelos valores do VIF, parece ser limitado, uma vez que os erros padrão não são excessivamente inflados. Assim, podemos concluir que a multicolinearidade não exerce um efeito forte na significância das associações estimadas, mantendo a confiabilidade das inferências feitas a partir do modelo.
+
+### Significância das Associações Estimadas
+Todas as variáveis incluídas no modelo mostraram-se estatisticamente significativas para prever a classificação de crédito, com p-valores extremamente baixos (p < 0,001). As estimativas dos coeficientes sugerem que:
+
+- Aumentos no limite de crédito (Changed_Credit_Limit) estão associados a uma menor probabilidade de um crédito "Poor".
+- Indivíduos com um mix de crédito "Standard" ou "Bad" têm uma maior chance de ter um crédito classificado como "Poor" em comparação com aqueles com um mix "Good".
+- O aumento da dívida pendente (Outstanding_Debt) também está associado a uma maior probabilidade de um crédito "Poor".
+- A realização do pagamento mínimo (Payment_of_Min_AmountYes) está fortemente associada a uma maior probabilidade de um crédito "Poor".
+
+Esses resultados indicam que as variáveis incluídas no modelo são preditores relevantes e impactam significativamente a classificação de crédito dos indivíduos.
+
+### Análise dos Resíduos e Multicolinearidade
+
+Analisamos a deviance e o Fator de Inflação da Variância (VIF) para verificar a adequação do modelo e identificar possíveis problemas de multicolinearidade.
+
+```{r}
+# Análise dos resíduos
+deviance_residual = out$deviance
+null_deviance = out$null.deviance
+gl_degrees_of_freedom = out$df.residual
+gl_null_degrees_of_freedom = out$df.null
+
+cat("Deviance Residual:", deviance_residual, "\n")
+cat("Null Deviance:", null_deviance, "\n")
+cat("Graus de Liberdade (Modelo):", gl_degrees_of_freedom, "\n")
+cat("Graus de Liberdade (Nulo):", gl_null_degrees_of_freedom, "\n")
+
+# VIF (Variance Inflation Factor)
+library(car)
+vif(out)
+```
+
+O gráfico de resíduos padronizados versus valores preditos apresenta uma análise visual crítica para a avaliação da adequação do modelo ajustado. Os resíduos padronizados devem idealmente estar distribuídos aleatoriamente ao redor da linha zero. Observando o gráfico, verifica-se que os resíduos não apresentam um padrão sistemático, o que sugere que o modelo está ajustado de forma apropriada aos dados. Caso houvesse um padrão visível, como uma estrutura em funil ou uma curva, isso poderia indicar problemas como heterocedasticidade ou não-linearidade, sugerindo a necessidade de refinamento do modelo.- VOU ADAPTAR NA VERDADE ACHO QUE O MODELO N TÁ APROPRIADO
+
+
+
+### Razões de Chances (Odds Ratios)
+
+```{r}
+# Razões de Chances (Odds Ratios)
+OR = exp(coef(out))
+sink(file = '_out/output/glm_Ex1 (OR).txt')
+cat('\n')
+print(OR)
+sink()
+```
+
+### Predição e Avaliação do Modelo
+
+```{r}
+# Probabilidades preditas
+pi.hat = predict(out, type = 'response')
+
+# Escores preditos
+cutoff = 0.5
+pred.Score = factor(ifelse(pi.hat > cutoff, "Poor", "Good"), levels = c('Good', 'Poor'))
+
+# Matriz de confusão
+library(caret)
+conf_matrix = confusionMatrix(data = pred.Score, reference = dta$Credit_Score)
+sink(file = '_out/output/glm_Ex1 (confMat).txt')
+cat('\n')
+print(conf_matrix)
+sink()
+
+# Curva ROC
+library(pROC)
+ROC = roc(dta$Credit_Score ~ pi.hat)
+plot(ROC, print.auc = TRUE)
+# Salvando figura
+dev.print(file = '_out/figures/figEx1_ROC.png', device = png, width = 1280, height = 720, res = 96, units = 'px')
+```
+
+
+### Análise dos Resultados
+
+A análise dos resultados mostra que o modelo de regressão logística ajusta-se bem aos dados, com uma redução significativa na deviance em relação à deviance nula. A análise do VIF indica que a multicolinearidade não afeta substancialmente a significância das variáveis preditoras. As razões de chances e as métricas de performance, como a curva ROC e a matriz de confusão, fornecem uma visão clara da eficácia do modelo em classificar a qualidade do crédito.- VOU ADAPTAR ESSE TEXTO
+
+
+## Modelo Gama Log-Linear
+
+
+
+
+
+
+
+
+
+
+
+# Apêndice 
 
 ```{r}
 #| label: tbl-t3
@@ -326,8 +509,4 @@ Com base na análise da tabela @tbl-t3, podemos concluir o seguinte sobre o ajus
    - Não há um padrão claro nos resíduos plotados em relação aos valores ajustados, indicando linearidade entre as variáveis independentes e dependentes.
 
 Em resumo, o modelo de regressão parece atender às suposições de homocedasticidade, normalidade aproximada dos resíduos, independência dos resíduos e linearidade entre as variáveis.
-
-
-
-
 
