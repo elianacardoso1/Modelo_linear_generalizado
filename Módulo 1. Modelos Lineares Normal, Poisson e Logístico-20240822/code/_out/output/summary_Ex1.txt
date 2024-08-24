@@ -1,8 +1,0 @@
-
-       Y                  L                   K           
- Min.   :    2510   Min.   :   0.2128   Min.   :    6791  
- 1st Qu.:   28951   1st Qu.:   4.1034   1st Qu.:   91627  
- Median :  111455   Median :  10.0709   Median :  350857  
- Mean   :  673823   Mean   :  50.3454   Mean   : 2642759  
- 3rd Qu.:  452522   3rd Qu.:  32.0512   3rd Qu.: 1928975  
- Max.   :16651722   Max.   :1906.5248   Max.   :61035284  
