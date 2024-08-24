@@ -1,7 +1,7 @@
 ---
 title: "Trabalho MLG"
 subtitle: ""
-author: "Eliana Cardoso Gonçalves"
+author: "Eliana Cardoso Gonçalves e Sophia Araujo de Moraes"
 date: "05/25/2024"
 date-format: short # formatacao dd/mm/aaaa
 lang: pt #linguagem
@@ -45,7 +45,8 @@ rm(list = ls())
 ```
 
 ```{r,biblioteca}
-
+#install.packages("kableExtra")
+library(kableExtra)
 library(corrplot)
 # bases de dados diversas
 library(haven)
@@ -67,7 +68,6 @@ library(summarytools)
 
 ```{r,diretorio}
 
-setwd("C:/Users/cardo/OneDrive/Documents/Estatística/7 período/mlg/Módulo 1. Modelos Lineares Normal, Poisson e Logístico-20240525/code")
 source("_src/src.R")
 
 ```
@@ -79,15 +79,11 @@ dta = dta %>% subset(year == '2014')
 ```
 
 
-
-
 ## Introdução
 
 A análise macroeconômica é fundamental para entender o desenvolvimento econômico e social dos países. No contexto da contabilidade nacional, variáveis como o Produto Interno Bruto (PIB), a força de trabalho e o estoque de capital são essenciais para avaliar a produtividade e o crescimento econômico. Este estudo utiliza dados da Penn World Table de 2020 para investigar a relação entre essas variáveis.
 
 O PIB nacional \(Y\), medido em dólares PPC de 2014, é uma medida abrangente da atividade econômica de um país. A força de trabalho \(L\) representa o total de pessoas empregadas ou em busca de emprego, refletindo a capacidade produtiva humana. O estoque de capital \(K\), também medido em dólares PPC de 2014, indica o valor total dos ativos produtivos de um país, como máquinas, edifícios e infraestrutura.
-
-
 
 Ao analisar essas variáveis, o objetivo é fornecer insights sobre as políticas econômicas que podem fomentar o crescimento e a produtividade. Esta investigação pode ajudar formuladores de políticas, economistas e pesquisadores a identificar áreas-chave para intervenção e investimento, promovendo um desenvolvimento econômico sustentável e inclusivo.
 

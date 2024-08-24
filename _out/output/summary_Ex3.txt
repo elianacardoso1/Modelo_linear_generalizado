@@ -1,0 +1,15 @@
+
+     Obitos          Populacao             PIB                 Gini       
+ Min.   :   1.00   Min.   :    1096   Min.   :    10041   Min.   :0.2907  
+ 1st Qu.:   1.00   1st Qu.:    9072   1st Qu.:    64194   1st Qu.:0.4742  
+ Median :   3.00   Median :   17544   Median :   140952   Median :0.5145  
+ Mean   :  13.79   Mean   :   49690   Mean   :  1044734   Mean   :0.5152  
+ 3rd Qu.:   7.00   3rd Qu.:   34366   3rd Qu.:   398007   3rd Qu.:0.5538  
+ Max.   :1811.00   Max.   :11253503   Max.   :446958815   Max.   :0.8082  
+   Tx_Desemp         Tx_Mort        PIB_per_capita   
+ Min.   : 0.100   Min.   :  1.664   Min.   :  2.263  
+ 1st Qu.: 4.540   1st Qu.: 11.474   1st Qu.:  5.065  
+ Median : 6.420   Median : 19.395   Median :  9.113  
+ Mean   : 6.924   Mean   : 24.446   Mean   : 12.798  
+ 3rd Qu.: 8.670   3rd Qu.: 31.712   3rd Qu.: 15.315  
+ Max.   :29.410   Max.   :153.787   Max.   :311.919  
