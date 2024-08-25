@@ -321,7 +321,7 @@ interpreta <- function(mod, alpha = 0.05) {
 fit %>% interpreta()                           
 ```
 
-Todos os valores-p associados aos coeficientes são muito pequenos
+Todos os p-valores associados aos coeficientes são muito pequenos
 (\<0.001), o que significa que podemos rejeitar a hipótese nula para
 todos os coeficientes, ao nível de 5% de confiança. Isso indica que
 tanto a força de trabalho quanto o estoque de capital têm efeitos
@@ -388,7 +388,7 @@ kable(resultados, col.names = c("Estatística", "Valor"), format = "markdown", d
 ```
 
 Na @tbl-teste1, com teste da Teste $𝐻0 : 𝛼 + 𝛽 = 1$ contra $𝐻1 : 𝛼 + 𝛽 ≠ 1$,
-obtivemos um valor-p de aproximadamente 0,943. Não rejeitamos a hipótese
+obtivemos um p-valor de aproximadamente 0,943. Não rejeitamos a hipótese
 nula $H_0$ ao nível de 5% de significância. Isso indica que os dados
 não fornecem evidências suficientes para concluir que a soma de $\alpha$
 e $\beta$ é diferente de 1. Em outras palavras, a suposição de retornos
@@ -715,25 +715,25 @@ fit_gamma  %>% interpreta()
 
 O intercepto estimado de 1.61754583 (@tbl-gama2) representa o logaritmo
 da produção quando tanto o trabalho (L) quanto o capital (K) são iguais
-a 1. Com um valor-p extremamente pequeno, o intercepto é
+a 1. Com um p-valor extremamente pequeno, o intercepto é
 estatisticamente significativo, indicando que ele desempenha um papel
 importante na modelagem da variável dependente 𝑌𝑖, ao nível de 5% de
 significância.
 
-O coeficiente para log(L) é 0.02371488, indicando que um aumento de 1%
+O coeficiente para log(L) é 0.02371, indicando que um aumento de 1%
 na força de trabalho (L) leva a um aumento de aproximadamente 0.024% na
-produção, mantendo o capital constante. O valor-p extremamente pequeno
+produção, mantendo o capital constante. O p-valor extremamente pequeno
 indica que este coeficiente é altamente significativo, o que valida a
 importância da força de trabalho na determinação da produção no modelo.
 
-O coeficiente para log(K) é 0.06012190, sugerindo que um aumento de 1%
+O coeficiente para log(K) é 0.06012, sugerindo que um aumento de 1%
 no capital (K) resulta em um aumento de aproximadamente 0.060% na
-produção, mantendo a força de trabalho constante. Com um valor-p
+produção, mantendo a força de trabalho constante. Com um p-valor
 extremamente baixo, esse coeficiente é altamente significativo,
 demonstrando que o capital tem uma influência importante e
 estatisticamente significativa na produção.
 
-O parâmetro de dispersão estimado é 0.00135537, o que indica que há uma
+O parâmetro de dispersão estimado é 0.00135, o que indica que há uma
 baixa variabilidade dos dados em torno da média ajustada pelo modelo.
 Isso sugere que o modelo gamma log-linear está capturando bem a
 dispersão dos dados, com pouca heterogeneidade residual não explicada
@@ -765,7 +765,7 @@ p_value <- 2 * pt(-abs(t_statistic), df = df.residual(fit_gamma ))
 ```
 
 ```{r}
-#| tbl-cap: ""
+#| tbl-cap: Teste
 #| label: tbl-teste
 
 # Criando a tabela de resultados
@@ -807,8 +807,8 @@ diminui, levando a um crescimento menos eficiente da produção.
 ## Análise dos Resíduos
 
 ```{r}
-#| label: tbl-gamma1
-#| tbl-cap: Grafico de Análise de resíduos 
+#| label: tbl-gamma77
+#| tbl-cap: Gráfico de Análise de resíduos 
 
 library(lmtest)
 ggresiduals(fit_gamma )
@@ -816,14 +816,14 @@ ggresiduals(fit_gamma )
 
 ```{r,include=FALSE}
 
-bptest(fit_gamma)
+#bptest(fit_gamma)
 
 # Teste de Durbin-Watson
-dw_test <- dwtest(fit_gamma)
-print(dw_test)
+#dw_test <- dwtest(fit_gamma)
+#print(dw_test)
 ```
 
-Com base na análise da tabela @tbl-gamma1, podemos concluir o seguinte
+Com base na análise da tabela @tbl-gamma77, podemos concluir o seguinte
 sobre o ajuste do modelo de regressão:
 
 **Homocedasticidade:** - A variância dos resíduos parece ser constante
@@ -850,6 +850,11 @@ quanto a essa suposição.
 aos valores ajustados, indicando não linearidade entre as variáveis
 independentes e dependentes.
 
+
+# Comparação dos Modelos: Gamma Log-Linear vs. Modelo Normal
+
+
+
 ```{r,include=FALSE}
 # Obter o log-likelihood dos modelos
 logLik(fit_gamma)
@@ -871,7 +876,18 @@ BIC(fit)
 
 ```
 
-# Comparação dos Modelos: Gamma Log-Linear vs. Modelo Normal
+```{r}
+# Criar um data frame com os dados dos modelos
+model_comparison <- data.frame(
+  Critério = c("Log-Likelihood", "AIC", "BIC"),
+  `Modelo Gamma Log-Linear` = c(-83.07791, 174.1558, 186.0351),
+  `Modelo Normal` = c(-59.39108, 126.7822, 138.6614)
+)
+
+# Exibir a tabela usando kable
+kable(model_comparison, caption = "Comparação dos Modelos Gamma Log-Linear e Normal")
+```
+
 
 Log-Likelihood (Log-Verossimilhança) - **Modelo Gamma Log-Linear**:
 -83.07791 - **Modelo Normal**: -59.39108
