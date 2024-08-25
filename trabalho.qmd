@@ -2,29 +2,31 @@
 title: "Trabalho MLG"
 subtitle: ""
 author: "Eliana Cardoso Gonçalves e Sophia Araujo de Moraes"
-date: "05/25/2024"
-date-format: short # formatacao dd/mm/aaaa
-lang: pt #linguagem
-toc: true # indice
+date: "08/26/2024"
+date-format: short # formatação dd/mm/aaaa
+lang: pt # linguagem
+toc: true # índice
 number-sections: true
-fig-cap-location: top #localizacao titulo figura 
+fig-cap-location: top # localização título figura 
 geometry:
-      - top=3cm
-      - left=3cm
-      - right=2cm
-      - bottom=2cm
+  - top=3cm
+  - left=3cm
+  - right=2cm
+  - bottom=2cm
 tbl-cap-location: top
-df-print: kable ## saida dos data frames serem kable
+df-print: kable # saída dos data frames serem kable
 fig-width: 10
 fig-height: 4
 format: 
   html:
-    self-contained: true # tornar o html compartilhavel
+    self-contained: true # tornar o html compartilhável
     theme: flatly
   pdf: 
     documentclass: scrreprt
   docx: default
-editor: source
+editor:
+  markdown:
+    wrap: 72
 editor_options:
   chunk_output_type: console
 output: 
@@ -33,41 +35,31 @@ output:
     df_print:
       digits: 3
   word_document:
-      fig_caption: true
-      df_print: kable
+    fig_caption: true
+    df_print: kable
 prefer-html: true
 execute:
   echo: false
   warning: false
 ---
+
 ```{r}
 rm(list = ls())
+
+if(!require(remotes)) install.packages("remotes")
+remotes::install_github("fndemarqui/reglin")
 ```
 
 ```{r,biblioteca}
-#install.packages("kableExtra")
-library(kableExtra)
-library(corrplot)
-# bases de dados diversas
-library(haven)
-# gráficos diversos
-library(ggplot2)
-# manipulação de bases de dados
-library(tidyverse)
-# análise de regressão
-library(performance)
-library(see)
-library(car)
-library(knitr)
-library(kableExtra)
-library(patchwork)
-library(reglin)
-library(summarytools)
-library(caret)
-library(pROC)
+
+
+if (!require(pacman))(install.packages("pacman"))(require(pacman))
+pacman::p_load( kableExtra, corrplot, haven, ggplot2, 
+  tidyverse, performance, see, car, 
+  knitr, patchwork, summarytools, 
+  caret, pROC, dplyr, reglin, dplyr)
 
 ```
-
 
 ```{r,diretorio}
 
@@ -75,55 +67,13 @@ source("_src/src.R")
 
 ```
 
-
-## Introdução
-
-
-
-## Metodologia
-
-Este estudo se concentra em uma amostra de 144 países distintos no ano de 2014, utilizando um modelo linear normal para explorar como a força de trabalho e o estoque de capital influenciam o PIB. A regressão linear múltipla será empregada para estimar os coeficientes que quantificam essas relações, permitindo-nos compreender melhor os determinantes do crescimento econômico.
-
-Essa relação pode ser expressa pela seguinte equação:
-
-Y=β0​+β1​X1​+β2​X2​+...+βp​Xp​+ε
-
-Onde:
-
-Y é a variável dependente ( PIB Nacional (Y) em dólares PPP de 2014).
-
-X1​,X2​,...,Xp​ são as variáveis independentes ( Força de Trabalho (L)e o Estoque de Capital (K) em dólares PPP de 2014).
-
-
-β1​,β2​,...,βp​ são os coeficientes de regressão que representam os efeitos das variáveis independentes na variável dependente.
-
-ε é o termo de erro, que representa a variação não explicada pelo modelo.
-
-
-Para garantir a robustez e confiabilidade dos resultados, optei por realizar uma transformação log-log nas variáveis, considerando que o PIB Nacional (Y) em dólares PPP de 2014, juntamente com as variáveis independentes "força de trabalho" e "estoque de capital", não apresentam uma distribuição normal. Essa abordagem vai permitir que  aos pressupostos do modelo normal sejam atendidos e obter resultados mais consistentes.
-
-Ao aplicar a transformação log-log, estamos ajustando a distribuição das variáveis para se adequarem melhor ao modelo, mitigando quaisquer distorções ou viés que possam surgir devido à falta de normalidade. Isso nos permite realizar inferências estatísticas mais confiáveis e interpretar os efeitos das variáveis independentes sobre o PIB Nacional de forma mais precisa.
-
-Essa estratégia de transformação aumenta a robustez da análise, pois reduz a influência de valores extremos e torna os resultados menos sensíveis a distribuições não normais. Portanto, podemos ter maior confiança nas conclusões derivadas do modelo, garantindo uma abordagem metodológica sólida e resultados mais confiáveis para tomada de decisão.
-
-# Resultados
-
-## Modelo Linear Normal
-
-A análise macroeconômica é fundamental para entender o desenvolvimento econômico e social dos países. No contexto da contabilidade nacional, variáveis como o Produto Interno Bruto (PIB), a força de trabalho e o estoque de capital são essenciais para avaliar a produtividade e o crescimento econômico. Este estudo utiliza dados da Penn World Table de 2020 para investigar a relação entre essas variáveis.
-
-O PIB nacional \(Y\), medido em dólares PPC de 2014, é uma medida abrangente da atividade econômica de um país. A força de trabalho \(L\) representa o total de pessoas empregadas ou em busca de emprego, refletindo a capacidade produtiva humana. O estoque de capital \(K\), também medido em dólares PPC de 2014, indica o valor total dos ativos produtivos de um país, como máquinas, edifícios e infraestrutura.
-
-Ao analisar essas variáveis, o objetivo é fornecer insights sobre as políticas econômicas que podem fomentar o crescimento e a produtividade. Esta investigação pode ajudar formuladores de políticas, economistas e pesquisadores a identificar áreas-chave para intervenção e investimento, promovendo um desenvolvimento econômico sustentável e inclusivo.
-
-### Análise Descritiva
+# Análise Descritiva
 
 ```{r}
 dta = read_dta("_dta/pwt1001.dta")
 # filtrando para 2014
 dta = dta %>% subset(year == '2014')
 ```
-
 
 ```{r}
 ## criando as variáveis de interesse
@@ -141,7 +91,6 @@ dta = merge(df.complete, dta, all.x = TRUE)
 
 
 ```
-
 
 ```{r}
 #| label: tbl-t1
@@ -166,12 +115,9 @@ kable(descr_df, format = "markdown")
 
 ```
 
-
 ```{r}
-
-#| label: grafico_Y
+#| label: fig-y
 #| fig-cap: Histograma PIB Nacional (Y) em dólares PPP de 2014
-## histograma Y (usando base::plot)
 
 
 hist_data = hist(dta$Y, xlab = 'Y', main = '', col = 'lightblue')
@@ -185,19 +131,20 @@ lines(x_values, y_values, lwd = 2)
 
 ```
 
-
-Observando o  @grafico_Y  e @tbl-t1 , o valor mínimo do PIB é $2.569, enquanto o valor máximo é significativamente maior, chegando a $18.244.220, indicando uma grande variação no PIB entre os países da amostra.A média do PIB é $769.941, o que é substancialmente maior que a mediana de $123.419, sugerindo que alguns países com PIB muito alto estão puxando a média para cima. A distribuição do PIB é bastante assimétrica, com muitos países tendo PIBs relativamente baixos e poucos países com PIBs muito altos.
-
-
+Observando o @fig-y e @tbl-t1 , o valor mínimo do PIB é \$2.569,
+enquanto o valor máximo é significativamente maior, chegando a
+\$18.244.220, indicando uma grande variação no PIB entre os países da
+amostra.A média do PIB é \$769.941, o que é substancialmente maior que a
+mediana de \$123.419, sugerindo que alguns países com PIB muito alto
+estão puxando a média para cima. A distribuição do PIB é bastante
+assimétrica, com muitos países tendo PIBs relativamente baixos e poucos
+países com PIBs muito altos.
 
 ```{r}
-
-#| label: grafico-L
+#| label: fig-l
 #| fig-cap: Histograma Força de Trabalho (L)
 
 
-## histograma L
-# invocando ggplot
 p = ggplot(dta, aes(x = L)) +
   # histograma
   geom_histogram(aes(x = L, after_stat(density)), fill = 'lightblue', col = 'black', bins = 10) +
@@ -221,15 +168,17 @@ p
 
 ```
 
-
-
-Analisando o @grafico-L  e a @tbl-t1, a variação da força de trabalho de 0,2994 a 2.045,91 reflete uma grande disparidade na população economicamente ativa entre os países. Com uma média de 54,60 e uma mediana de 11,65, a distribuição mostra-se assimétrica, sugerindo a presença de países com forças de trabalho extremas, seja pela sua grandeza ou pequenez em relação à média da amostrm alguns países com países com a força de trabalho outlier.
-
+Analisando o @fig-l e a @tbl-t1, a variação da força de trabalho de
+0,2994 a 2.045,91 reflete uma grande disparidade na população
+economicamente ativa entre os países. Com uma média de 54,60 e uma
+mediana de 11,65, a distribuição mostra-se assimétrica, sugerindo a
+presença de países com forças de trabalho extremas, seja pela sua
+grandeza ou pequenez em relação à média da amostrm alguns países com
+países com a força de trabalho outlier.
 
 ```{r}
 #| fig-cap: Histograma Estoque de Capital (K) em dólares PPP de 2014)
-#| label: grafico-K
-
+#| label: fig-k
 
 ## histograma K
 # invocando ggplot
@@ -256,16 +205,87 @@ p
 
 ```
 
+Analisando os valores da @tbl-t1 e @fig-k ,
+observamos que o estoque de capital varia amplamente, de \$7.345 a
+\$64.118.472, indicando diferenças significativas no nível de
+investimento em capital produtivo entre os países.
 
-Analisando os valores da @tbl-t1 e @grafico-K, Observamos que o estoque de capital varia amplamente, de $7.345 a $64.118.472, indicando diferenças significativas no nível de investimento em capital produtivo entre os países.
+A média do estoque de capital é \$3.058.761, consideravelmente maior que
+a mediana de \$394.841, o que sugere que alguns países têm estoques de
+capital extremamente altos que estão elevando a média.
 
-A média do estoque de capital é $3.058.761, consideravelmente maior que a mediana de $394.841, o que sugere que alguns países têm estoques de capital extremamente altos que estão elevando a média.
+# Modelo Log-Normal
 
-### Regressão Normal
+Este estudo se concentra em uma amostra de 144 países distintos no ano
+de 2014, utilizando um modelo linear normal para explorar como a força
+de trabalho e o estoque de capital influenciam o PIB. A regressão linear
+múltipla será empregada para estimar os coeficientes que quantificam
+essas relações, permitindo-nos compreender melhor os determinantes do
+crescimento econômico.
+
+Essa relação pode ser expressa pela seguinte equação:
+
+$$Y=β0+β1X1+β2X2+...+βpXp+ε$$
+
+Onde:
+
+$Y$ é a variável dependente ( PIB Nacional (Y) em dólares PPP de 2014).
+
+$X1,X2,...,Xp$ são as variáveis independentes ( Força de Trabalho (L)e o
+Estoque de Capital (K) em dólares PPP de 2014).
+
+$β1,β2,...,βp$ são os coeficientes de regressão que representam os
+efeitos das variáveis independentes na variável dependente.
+
+$ε$ é o termo de erro, que representa a variação não explicada pelo
+modelo.
+
+Para garantir a robustez e confiabilidade dos resultados, optamos por
+realizar uma transformação log-log nas variáveis, considerando que o PIB
+Nacional (Y) em dólares PPP de 2014, juntamente com as variáveis
+independentes "força de trabalho" e "estoque de capital", não apresentam
+uma distribuição normal. Essa abordagem vai permitir que aos
+pressupostos do modelo normal sejam atendidos e obter resultados mais
+consistentes.
+
+Ao aplicar a transformação log-log, estamos ajustando a distribuição das
+variáveis para se adequarem melhor ao modelo, mitigando quaisquer
+distorções ou viés que possam surgir devido à falta de normalidade. Isso
+nos permite realizar inferências estatísticas mais confiáveis e
+interpretar os efeitos das variáveis independentes sobre o PIB Nacional
+de forma mais precisa.
+
+Essa estratégia de transformação aumenta a robustez da análise, pois
+reduz a influência de valores extremos e torna os resultados menos
+sensíveis a distribuições não normais. Portanto, podemos ter maior
+confiança nas conclusões derivadas do modelo, garantindo uma abordagem
+metodológica sólida e resultados mais confiáveis para tomada de decisão.
+
+## Resultados
+
+A análise macroeconômica é fundamental para entender o desenvolvimento
+econômico e social dos países. No contexto da contabilidade nacional,
+variáveis como o Produto Interno Bruto (PIB), a força de trabalho e o
+estoque de capital são essenciais para avaliar a produtividade e o
+crescimento econômico. Este estudo utiliza dados da Penn World Table de
+2020 para investigar a relação entre essas variáveis.
+
+O PIB nacional (Y), medido em dólares PPC de 2014, é uma medida
+abrangente da atividade econômica de um país. A força de trabalho (L)
+representa o total de pessoas empregadas ou em busca de emprego,
+refletindo a capacidade produtiva humana. O estoque de capital (K),
+também medido em dólares PPC de 2014, indica o valor total dos ativos
+produtivos de um país, como máquinas, edifícios e infraestrutura.
+
+Ao analisar essas variáveis, o objetivo é fornecer insights sobre as
+políticas econômicas que podem fomentar o crescimento e a produtividade.
+Esta investigação pode ajudar formuladores de políticas, economistas e
+pesquisadores a identificar áreas-chave para intervenção e investimento,
+promovendo um desenvolvimento econômico sustentável e inclusivo.
 
 ```{r}
 #| label: tbl-t2
-#| tbl-cap: Ajuste do Modelo de Regressão Normal com transformação
+#| tbl-cap: Ajuste do Modelo de Regressão Log-Normal 
 
 fit = lm(log(Y) ~ log(L) + log(K), data = dta)
 # resultados
@@ -296,26 +316,140 @@ interpreta <- function(mod, alpha = 0.05) {
 fit %>% interpreta()                           
 ```
 
+Todos os valores-p associados aos coeficientes são muito pequenos
+(\<0.001), o que significa que podemos rejeitar a hipótese nula para
+todos os coeficientes, ao nível de 5% de confiança. Isso indica que
+tanto a força de trabalho quanto o estoque de capital têm efeitos
+significativos no PIB, conforme medido pelo logaritmo.
 
-Todos os valores-p associados aos coeficientes são muito pequenos (<0.001), o que significa que podemos rejeitar a hipótese nula para todos os coeficientes, ao nível de 5% de confiança. Isso indica que tanto a força de trabalho quanto o estoque de capital têm efeitos significativos no PIB, conforme medido pelo logaritmo.
+O coeficiente estimado para log(K) é 0,70728. Isso significa que, se o
+estoque de capital (K) aumentar em 1%, o PIB (Y) aumentará em
+aproximadamente 0.70728 × 100 = 70.728 , mantendo todas as outras
+variáveis constantes.
 
+O coeficiente estimado para log ⁡ (L ) é0.29. Isso significa que, se a
+força de trabalho (L) aumentar em 1%, o PIB (Y) aumentará em
+aproximadamente 0,29 × 100 =29,409, mantendo todas as outras variáveis
+constantes.
 
-O coeficiente estimado para log(K) é 0,70728. Isso significa que, se o estoque de capital (𝐾) aumentar em 1%, o PIB (𝑌) aumentará em aproximadamente 0.70728 × 100 = 70.728 , mantendo todas as outras variáveis constantes.
+Além disso, o modelo tem um R-quadrado ajustado de aproximadamente 0,96,
+o que significa que aproximadamente 95,92% da variabilidade no logaritmo
+do PIB pode ser explicada pelas variáveis independentes incluídas no
+modelo.
 
-O coeficiente estimado para log ⁡ ( 𝐿 )  é ,.29. Isso significa que, se a força de trabalho ( L) aumentar em 1%, o PIB (𝑌) aumentará em aproximadamente 0,29 × 100 =29,409, mantendo todas as outras variáveis constantes.
+Esses resultados sugerem que tanto a força de trabalho quanto o estoque
+de capital têm um impacto significativo no PIB, conforme medido pelo
+logaritmo.
 
-Além disso, o modelo tem um R-quadrado ajustado de aproximadamente 0,96, o que significa que aproximadamente 95,92% da variabilidade no logaritmo do PIB pode ser explicada pelas variáveis independentes incluídas no modelo.
+-   **Hipótese Nula** $(H_0)$: $\alpha + \beta = 1$ A soma dos
+    coeficientes é igual a 1, sugerindo retornos constantes à escala.
+-   **Hipótese Alternativa** $(H_1)$: $\alpha + \beta \neq 1$ A soma dos
+    coeficientes não é igual a 1, sugerindo que não há retornos
+    constantes à escala.
 
-Esses resultados sugerem que tanto a força de trabalho quanto o estoque de capital têm um impacto significativo no PIB, conforme medido pelo logaritmo.
+```{r}
+#| tbl-cap: Teste
+#| label: tbl-teste1
 
+# Estimar o modelo de regressão log-linear
+fit = lm(log(Y) ~ log(L) + log(K), data = dta)
 
-## Modelo Logistico
+# Carregar o pacote necessário
+library(knitr)
 
-Utilizamos uma base de dados obtida do Kaggle para realizar uma análise de classificação de crédito. A tarefa principal é construir um modelo de machine learning capaz de classificar o crédito dos clientes de uma instituição financeira em diferentes faixas de risco, a fim de otimizar os processos de decisão e reduzir esforços manuais.
+# Obter as estimativas de alpha e beta
+alpha_hat <- coef(fit)["log(L)"]
+beta_hat <- coef(fit)["log(K)"]
 
-A base de dados contém 50.000 observações e 27 variáveis que fornecem informações detalhadas sobre os clientes, incluindo idade, ocupação, renda anual, número de contas bancárias, histórico de atrasos em pagamentos, entre outras características financeiras. O objetivo principal é prever a classificação de crédito dos indivíduos, segmentando-os em categorias como "Poor" e "Good".
+# Teste de hipótese
+soma_alpha_beta <- alpha_hat + beta_hat
+se_alpha_beta <- sqrt(vcov(fit)["log(L)", "log(L)"] + vcov(fit)["log(K)", "log(K)"] + 2 * vcov(fit)["log(L)", "log(K)"])
 
-Como parte da análise, será explorado o ajuste do modelo de regressão logística, focando na avaliação dos resíduos para verificar a adequação do modelo. Além disso, serão analisados os Fatores de Inflação da Variância (VIF) para cada preditor, a fim de identificar possíveis problemas de multicolinearidade e seu impacto na significância das associações estimadas.
+# Calcular a estatística t
+t_statistic <- (soma_alpha_beta - 1) / se_alpha_beta
+
+# Calcular o valor-p
+p_value <- 2 * pt(-abs(t_statistic), df = df.residual(fit))
+
+# Criar uma tabela com os resultados
+resultados <- data.frame(
+  Estatística = c("Estimativa de alpha", "Estimativa de beta", "Soma de alpha e beta", "Estatística t", "Valor-p"),
+  Valor = c(alpha_hat, beta_hat, soma_alpha_beta, t_statistic, p_value)
+)
+
+# Exibir a tabela
+kable(resultados, col.names = c("Estatística", "Valor"), format = "markdown", digits = 4)
+
+```
+
+Na @tbl-teste1, com teste da Teste $𝐻0 : 𝛼 + 𝛽 = 1$ contra $𝐻1 : 𝛼 + 𝛽 ≠ 1$,
+obtivemos um valor-p de aproximadamente 0,943. Não rejeitamos a hipótese
+nula $H_0$ ao nível de 5% de significância. Isso indica que os dados
+não fornecem evidências suficientes para concluir que a soma de $\alpha$
+e $\beta$ é diferente de 1. Em outras palavras, a suposição de retornos
+constantes à escala $\alpha + \beta = 1$ é razoável para o ano
+analisado. Isso sugere que, com base nos dados, um aumento proporcional
+igual na força de trabalho (L) e no capital (K) resulta em um aumento
+proporcional na produção (Y), confirmando a hipótese de retornos
+constantes à escala na função de produção Cobb-Douglas.
+
+## Análise dos Resíduos
+
+```{r}
+#| label: fig-t3
+#| fig-cap: Grafico de Análise de resíduos 
+
+ggresiduals(fit)
+#testResiduals(fit)
+```
+
+Com base na análise da tabela @fig-t3, podemos concluir o seguinte sobre
+o ajuste do modelo de regressão:
+
+**Homocedasticidade:** - A variância dos resíduos parece ser constante
+em toda a faixa dos valores ajustados, o que é consistente com a
+suposição de homocedasticidade na regressão linear.
+
+**Normalidade:** - Embora o teste de Shapiro-Wilk sugira que os resíduos
+não sigam uma distribuição normal, desconsiderando caudas pesadas tanto
+nos extremos inferiores quanto nos superiores, podemos aproximar que os
+resíduos estão próximos de uma distribuição normal.
+
+**Independência dos Resíduos:** - Tanto o teste de Durbin-Watson quanto
+a inspeção do gráfico de resíduos versus valores ajustados na tabela
+@fig-t3 não fornecem evidências significativas para rejeitar a hipótese
+nula de ausência de autocorrelação positiva ou negativa nos resíduos.
+Assim, parece que os resíduos são independentes entre si.
+
+**Linearidade:** - Não há um padrão claro nos resíduos plotados em
+relação aos valores ajustados, indicando linearidade entre as variáveis
+independentes e dependentes.
+
+Portanto, concluirmos que o modelo de regressão parece atender às
+suposições de homocedasticidade, normalidade aproximada dos resíduos,
+independência dos resíduos e linearidade entre as variáveis.
+
+# Modelo Logistico
+
+Utilizamos uma base de dados obtida do Kaggle para realizar uma análise
+de classificação de crédito. A tarefa principal é construir um modelo de
+machine learning capaz de classificar o crédito dos clientes de uma
+instituição financeira em diferentes faixas de risco, a fim de otimizar
+os processos de decisão e reduzir esforços manuais.
+
+A base de dados contém 50.000 observações e 27 variáveis que fornecem
+informações detalhadas sobre os clientes, incluindo idade, ocupação,
+renda anual, número de contas bancárias, histórico de atrasos em
+pagamentos, entre outras características financeiras. O objetivo
+principal é prever a classificação de crédito dos indivíduos,
+segmentando-os em categorias como "Poor" e "Good".
+
+Como parte da análise, será explorado o ajuste do modelo de regressão
+logística, focando na avaliação dos resíduos para verificar a adequação
+do modelo. Além disso, serão analisados os Fatores de Inflação da
+Variância (VIF) para cada preditor, a fim de identificar possíveis
+problemas de multicolinearidade e seu impacto na significância das
+associações estimadas.
 
 ```{r}
 ## carregando dados: base teste (Kaggle)
@@ -326,7 +460,6 @@ dta_treino = read.csv('_dta/train.csv')
 glimpse(dta_treino)
 
 ```
-
 
 ```{r}
 # Limpeza da base
@@ -358,7 +491,6 @@ summary(dta[, c('Outstanding_Debt', 'Changed_Credit_Limit')])
 
 ```
 
-
 ```{r}
 # Análise associativa preliminar
 boxplot(Outstanding_Debt ~ Credit_Score, data = dta)
@@ -368,8 +500,6 @@ chisq.test(x = dta$Payment_of_Min_Amount, y = dta$Credit_Score)
 
 ```
 
-
-
 ```{r}
 # Modelo de regressão logística
 out <- glm(Credit_Score ~ Credit_Mix + Outstanding_Debt + Payment_of_Min_Amount + Changed_Credit_Limit, family = binomial(link = logit), data = dta)
@@ -378,33 +508,63 @@ summary(out)
 
 ### Análise dos Resíduos
 
-Ao analisar os resíduos do modelo logístico ajustado para prever a classificação de crédito dos indivíduos, observamos que a deviance residual é de 24.833 com 32.070 graus de liberdade, comparada à deviance nula de 42.604 com 32.075 graus de liberdade. A redução significativa na deviance indica que o modelo ajusta-se bem aos dados, sugerindo que os preditores selecionados têm um impacto relevante na previsão da variável resposta. Contudo, uma análise mais detalhada dos resíduos seria necessária para confirmar a ausência de padrões não modelados e avaliar possíveis violações das suposições do modelo.
+Ao analisar os resíduos do modelo logístico ajustado para prever a
+classificação de crédito dos indivíduos, observamos que a deviance
+residual é de 24.833 com 32.070 graus de liberdade, comparada à deviance
+nula de 42.604 com 32.075 graus de liberdade. A redução significativa na
+deviance indica que o modelo ajusta-se bem aos dados, sugerindo que os
+preditores selecionados têm um impacto relevante na previsão da variável
+resposta. Contudo, uma análise mais detalhada dos resíduos seria
+necessária para confirmar a ausência de padrões não modelados e avaliar
+possíveis violações das suposições do modelo.
 
 ### Análise do VIF (Variance Inflation Factor)
 
-Para avaliar a multicolinearidade entre os preditores do modelo, foi realizado o cálculo do VIF para cada variável. A análise dos erros padrão associados aos coeficientes do modelo mostrou que:
+Para avaliar a multicolinearidade entre os preditores do modelo, foi
+realizado o cálculo do VIF para cada variável. A análise dos erros
+padrão associados aos coeficientes do modelo mostrou que:
 
-- Credit_MixStandard: Estimativa de 1,010 com erro padrão de 0,07013.
-- Credit_MixBad: Estimativa de 2,345 com erro padrão de 0,1036.
-- Outstanding_Debt: Estimativa de 0,0006567 com erro padrão de 0,00002935.
-- Payment_of_Min_AmountYes: Estimativa de 1,423 com erro padrão de 0,08047.
-- Changed_Credit_Limit: Estimativa de -0,02382 com erro padrão de 0,003673.
+-   Credit_MixStandard: Estimativa de 1,010 com erro padrão de 0,07013.
+-   Credit_MixBad: Estimativa de 2,345 com erro padrão de 0,1036.
+-   Outstanding_Debt: Estimativa de 0,0006567 com erro padrão de
+    0,00002935.
+-   Payment_of_Min_AmountYes: Estimativa de 1,423 com erro padrão de
+    0,08047.
+-   Changed_Credit_Limit: Estimativa de -0,02382 com erro padrão de
+    0,003673.
 
-O impacto da multicolinearidade, conforme indicado pelos valores do VIF, parece ser limitado, uma vez que os erros padrão não são excessivamente inflados. Assim, podemos concluir que a multicolinearidade não exerce um efeito forte na significância das associações estimadas, mantendo a confiabilidade das inferências feitas a partir do modelo.
+O impacto da multicolinearidade, conforme indicado pelos valores do VIF,
+parece ser limitado, uma vez que os erros padrão não são excessivamente
+inflados. Assim, podemos concluir que a multicolinearidade não exerce um
+efeito forte na significância das associações estimadas, mantendo a
+confiabilidade das inferências feitas a partir do modelo.
 
 ### Significância das Associações Estimadas
-Todas as variáveis incluídas no modelo mostraram-se estatisticamente significativas para prever a classificação de crédito, com p-valores extremamente baixos (p < 0,001). As estimativas dos coeficientes sugerem que:
 
-- Aumentos no limite de crédito (Changed_Credit_Limit) estão associados a uma menor probabilidade de um crédito "Poor".
-- Indivíduos com um mix de crédito "Standard" ou "Bad" têm uma maior chance de ter um crédito classificado como "Poor" em comparação com aqueles com um mix "Good".
-- O aumento da dívida pendente (Outstanding_Debt) também está associado a uma maior probabilidade de um crédito "Poor".
-- A realização do pagamento mínimo (Payment_of_Min_AmountYes) está fortemente associada a uma maior probabilidade de um crédito "Poor".
+Todas as variáveis incluídas no modelo mostraram-se estatisticamente
+significativas para prever a classificação de crédito, com p-valores
+extremamente baixos (p \< 0,001). As estimativas dos coeficientes
+sugerem que:
 
-Esses resultados indicam que as variáveis incluídas no modelo são preditores relevantes e impactam significativamente a classificação de crédito dos indivíduos.
+-   Aumentos no limite de crédito (Changed_Credit_Limit) estão
+    associados a uma menor probabilidade de um crédito "Poor".
+-   Indivíduos com um mix de crédito "Standard" ou "Bad" têm uma maior
+    chance de ter um crédito classificado como "Poor" em comparação com
+    aqueles com um mix "Good".
+-   O aumento da dívida pendente (Outstanding_Debt) também está
+    associado a uma maior probabilidade de um crédito "Poor".
+-   A realização do pagamento mínimo (Payment_of_Min_AmountYes) está
+    fortemente associada a uma maior probabilidade de um crédito "Poor".
+
+Esses resultados indicam que as variáveis incluídas no modelo são
+preditores relevantes e impactam significativamente a classificação de
+crédito dos indivíduos.
 
 ### Análise dos Resíduos e Multicolinearidade
 
-Analisamos a deviance e o Fator de Inflação da Variância (VIF) para verificar a adequação do modelo e identificar possíveis problemas de multicolinearidade.
+Analisamos a deviance e o Fator de Inflação da Variância (VIF) para
+verificar a adequação do modelo e identificar possíveis problemas de
+multicolinearidade.
 
 ```{r}
 # Análise dos resíduos
@@ -423,9 +583,16 @@ library(car)
 vif(out)
 ```
 
-O gráfico de resíduos padronizados versus valores preditos apresenta uma análise visual crítica para a avaliação da adequação do modelo ajustado. Os resíduos padronizados devem idealmente estar distribuídos aleatoriamente ao redor da linha zero. Observando o gráfico, verifica-se que os resíduos não apresentam um padrão sistemático, o que sugere que o modelo está ajustado de forma apropriada aos dados. Caso houvesse um padrão visível, como uma estrutura em funil ou uma curva, isso poderia indicar problemas como heterocedasticidade ou não-linearidade, sugerindo a necessidade de refinamento do modelo.- VOU ADAPTAR NA VERDADE ACHO QUE O MODELO N TÁ APROPRIADO
-
-
+O gráfico de resíduos padronizados versus valores preditos apresenta uma
+análise visual crítica para a avaliação da adequação do modelo ajustado.
+Os resíduos padronizados devem idealmente estar distribuídos
+aleatoriamente ao redor da linha zero. Observando o gráfico, verifica-se
+que os resíduos não apresentam um padrão sistemático, o que sugere que o
+modelo está ajustado de forma apropriada aos dados. Caso houvesse um
+padrão visível, como uma estrutura em funil ou uma curva, isso poderia
+indicar problemas como heterocedasticidade ou não-linearidade, sugerindo
+a necessidade de refinamento do modelo.- VOU ADAPTAR NA VERDADE ACHO QUE
+O MODELO N TÁ APROPRIADO
 
 ### Razões de Chances (Odds Ratios)
 
@@ -464,49 +631,270 @@ plot(ROC, print.auc = TRUE)
 dev.print(file = '_out/figures/figEx1_ROC.png', device = png, width = 1280, height = 720, res = 96, units = 'px')
 ```
 
-
 ### Análise dos Resultados
 
-A análise dos resultados mostra que o modelo de regressão logística ajusta-se bem aos dados, com uma redução significativa na deviance em relação à deviance nula. A análise do VIF indica que a multicolinearidade não afeta substancialmente a significância das variáveis preditoras. As razões de chances e as métricas de performance, como a curva ROC e a matriz de confusão, fornecem uma visão clara da eficácia do modelo em classificar a qualidade do crédito.- VOU ADAPTAR ESSE TEXTO
+A análise dos resultados mostra que o modelo de regressão logística
+ajusta-se bem aos dados, com uma redução significativa na deviance em
+relação à deviance nula. A análise do VIF indica que a
+multicolinearidade não afeta substancialmente a significância das
+variáveis preditoras. As razões de chances e as métricas de performance,
+como a curva ROC e a matriz de confusão, fornecem uma visão clara da
+eficácia do modelo em classificar a qualidade do crédito.- VOU ADAPTAR
+ESSE TEXTO
 
-
-## Modelo Gama Log-Linear
-
-
-
-
-
-
-
-
-
-
-
-# Apêndice 
+# Modelo Gama Log-Linear
 
 ```{r}
-#| label: tbl-t3
-#| fig-cap: Grafico de Análise de resíduos 
+interpreta <- function(mod, alpha = 0.05) {
+  tab <- summary(mod)
+  tabela <- as.data.frame(coef(tab))
+  tabela <- cbind(Covariavel = rownames(tabela), tabela)
+  tabela <- tabela %>%
+    mutate(
+      Estimacao = round(Estimate,4),
+      ErroPadrao = round(`Std. Error`,4),
+      Pvalor = `Pr(>|t|)`,
+      sig = case_when(
+        is.na(`Pr(>|t|)`) ~ " ",
+        `Pr(>|t|)` < 0.001 ~ "<0.001***",
+        `Pr(>|t|)` <= alpha ~ paste0(" ", format(`Pr(>|t|)`, digits = 3), "*"),
+        TRUE ~ paste0(" ", format(`Pr(>|t|)`, digits = 3))
+      )
+    ) %>%
+    select(Estimacao, ErroPadrao, Pvalor, sig)
+  
+  return(tabela)
+}
 
-ggresiduals(fit)
-#testResiduals(fit)
 ```
 
+```{r}
+dta = read_dta("_dta/pwt1001.dta")
+# filtrando para 2014
+dta = dta %>% subset(year == '2014')
+```
+
+```{r}
+## criando as variáveis de interesse
+# definindo as variáveis
+dta$Y = dta$rgdpo
+dta$L = dta$emp*dta$hc
+dta$K = dta$rnna
+# rearranjando colunas
+dta = dta %>% relocate(Y, .after = year)
+dta = dta %>% relocate(L, .after = Y)
+dta = dta %>% relocate(K, .after = K)
+# filtrando NAs
+df.complete = dta[, c('Y', 'L', 'K')] %>% na.omit()
+dta = merge(df.complete, dta, all.x = TRUE)
 
 
-Com base na análise da tabela @tbl-t3, podemos concluir o seguinte sobre o ajuste do modelo de regressão:
+```
 
-**Homocedasticidade:**
-   - A variância dos resíduos parece ser constante em toda a faixa dos valores ajustados, o que é consistente com a suposição de homocedasticidade na regressão linear.
+```{r}
+#| tbl-cap: Modelo Gamma Log-linear
+#| label: tbl-gama2
 
-**Normalidade:**
-   - Embora o teste de Shapiro-Wilk sugira que os resíduos não sigam uma distribuição normal, desconsiderando caudas pesadas tanto nos extremos inferiores quanto nos superiores, podemos aproximar que os resíduos estão próximos de uma distribuição normal.
+# Ajuste o modelo gama log-linear
+fit_gamma <- glm(log(Y) ~ log(L) + log(K), family = Gamma(link = "log"), data = dta)
 
-**Independência dos Resíduos:**
-   - Tanto o teste de Durbin-Watson quanto a inspeção do gráfico de resíduos versus valores ajustados na tabela @tbl-t3 não fornecem evidências significativas para rejeitar a hipótese nula de ausência de autocorrelação positiva ou negativa nos resíduos. Assim, parece que os resíduos são independentes entre si.
 
-**Linearidade:**
-   - Não há um padrão claro nos resíduos plotados em relação aos valores ajustados, indicando linearidade entre as variáveis independentes e dependentes.
 
-Em resumo, o modelo de regressão parece atender às suposições de homocedasticidade, normalidade aproximada dos resíduos, independência dos resíduos e linearidade entre as variáveis.
 
+# Exiba os resultados
+fit_gamma  %>% interpreta()   
+
+```
+
+O intercepto estimado de 1.61754583 (@tbl-gama2) representa o logaritmo
+da produção quando tanto o trabalho (L) quanto o capital (K) são iguais
+a 1. Com um valor-p extremamente pequeno, o intercepto é
+estatisticamente significativo, indicando que ele desempenha um papel
+importante na modelagem da variável dependente 𝑌𝑖, ao nível de 5% de
+significância.
+
+O coeficiente para log(L) é 0.02371488, indicando que um aumento de 1%
+na força de trabalho (L) leva a um aumento de aproximadamente 0.024% na
+produção, mantendo o capital constante. O valor-p extremamente pequeno
+indica que este coeficiente é altamente significativo, o que valida a
+importância da força de trabalho na determinação da produção no modelo.
+
+O coeficiente para log(K) é 0.06012190, sugerindo que um aumento de 1%
+no capital (K) resulta em um aumento de aproximadamente 0.060% na
+produção, mantendo a força de trabalho constante. Com um valor-p
+extremamente baixo, esse coeficiente é altamente significativo,
+demonstrando que o capital tem uma influência importante e
+estatisticamente significativa na produção.
+
+O parâmetro de dispersão estimado é 0.00135537, o que indica que há uma
+baixa variabilidade dos dados em torno da média ajustada pelo modelo.
+Isso sugere que o modelo gamma log-linear está capturando bem a
+dispersão dos dados, com pouca heterogeneidade residual não explicada
+pelo modelo.
+
+```{r}
+# Estimativa dos coeficientes e variâncias
+alpha_hat <- coef(fit_gamma )["log(L)"]
+beta_hat <- coef(fit_gamma )["log(K)"]
+
+# Cálculo da soma dos coeficientes
+soma_alpha_beta <- alpha_hat + beta_hat
+
+# Cálculo do erro padrão da soma dos coeficientes
+vcov_matrix <- vcov(fit_gamma )
+se_alpha_beta <- sqrt(vcov_matrix["log(L)", "log(L)"] + vcov_matrix["log(K)", "log(K)"] + 2 * vcov_matrix["log(L)", "log(K)"])
+
+# Cálculo da estatística t
+t_statistic <- (soma_alpha_beta - 1) / se_alpha_beta
+
+# Cálculo do valor-p
+p_value <- 2 * pt(-abs(t_statistic), df = df.residual(fit_gamma ))
+
+
+
+
+
+
+```
+
+```{r}
+#| tbl-cap: ""
+#| label: tbl-teste
+
+# Criando a tabela de resultados
+resultados <- data.frame(
+  Descrição = c("Soma de alpha e beta", "Erro padrão", "Estatística t", "Valor-p", "Decisão"),
+  Valor = c(
+    round(soma_alpha_beta,4),
+    round(se_alpha_beta,4),
+    round(t_statistic,4),
+    p_value,
+    ifelse(p_value < 0.05, "Rejeitamos H0", "Não rejeitamos H0")
+  )
+)
+
+# Exibir a tabela
+kable(resultados)
+
+```
+
+Decisão sobre Teste $𝐻0 : 𝛼 + 𝛽 = 1$ contra $𝐻1 : 𝛼 + 𝛽 ≠ 1$: (@tbl-teste) Como o valor-p é extremamente pequeno, rejeitamos a hipótese nula $H_0$ indicando que a soma de $\alpha$ e $\beta$ é significativamente diferente de 1. Isso
+significa que a hipótese de retornos constantes à escala não é válida
+para os dados analisados.
+
+Retornos constantes à escala implicam que, se ambos os insumos (L e K)
+aumentarem na mesma proporção, a produção $Y_i$ também aumentará na
+mesma proporção. No entanto, dado que a soma de $\alpha$ e $\beta$ é
+significativamente diferente de 1, isso sugere que os retornos à escala
+não são constantes para este modelo. Dependendo do valor específico da
+soma $(\alpha + \beta < 1$ ou $\alpha + \beta > 1)$, os retornos à
+escala podem ser decrescentes ou crescentes, respectivamente.
+
+Assim, a soma de $\alpha$ e $\beta$ é 0.08383678, o que está longe de 1,
+indicando retornos decrescentes à escala. Isso significa que aumentar
+proporcionalmente a força de trabalho e o capital levará a um aumento
+menos que proporcional na produção. Em outras palavras, conforme mais
+insumos são adicionados, a produtividade marginal desses insumos
+diminui, levando a um crescimento menos eficiente da produção.
+
+## Análise dos Resíduos
+
+```{r}
+#| label: tbl-gamma1
+#| tbl-cap: Grafico de Análise de resíduos 
+
+library(lmtest)
+ggresiduals(fit_gamma )
+```
+
+```{r,include=FALSE}
+
+bptest(fit_gamma)
+
+# Teste de Durbin-Watson
+dw_test <- dwtest(fit_gamma)
+print(dw_test)
+```
+
+Com base na análise da tabela @tbl-gamma1, podemos concluir o seguinte
+sobre o ajuste do modelo de regressão:
+
+**Homocedasticidade:** - A variância dos resíduos parece ser constante
+em toda a faixa dos valores ajustados. Com o teste de Teste de
+Breusch-Paga, com um valor-p de 0.2634, não rejeitamos a hipótese nula
+de homocedasticidade. Isso significa que não há evidências suficientes
+para sugerir a presença de heterocedasticidade nos resíduos do modelo
+gamma.
+
+**Normalidade:** - Embora o teste de Shapiro-Wilk sugira que os resíduos
+não sigam uma distribuição normal, desconsiderando caudas pesadas tanto
+nos extremos inferiores quanto nos superiores, podemos aproximar que os
+resíduos estão próximos de uma distribuição normal.
+
+**Independência dos Resíduos:** - Tanto o teste de Durbin-Watson quanto
+a inspeção do gráfico de resíduos versus valores ajustados na tabela
+@tbl-gamma1 não fornecem evidências significativas para rejeitar a
+hipótese nula de ausência de autocorrelação positiva ou negativa nos
+resíduos. Assim, parece que os resíduos são independentes entre si, o
+que é uma boa indicação de que o modelo está adequadamente ajustado
+quanto a essa suposição.
+
+**Linearidade:** - Há um padrão claro nos resíduos plotados em relação
+aos valores ajustados, indicando não linearidade entre as variáveis
+independentes e dependentes.
+
+```{r,include=FALSE}
+# Obter o log-likelihood dos modelos
+logLik(fit_gamma)
+logLik(fit)
+
+```
+
+```{r,include=FALSE}
+# Obter o AIC dos modelos
+AIC(fit_gamma)
+AIC(fit)
+
+```
+
+```{r,include=FALSE}
+# Obter o BIC dos modelos
+BIC(fit_gamma)
+BIC(fit)
+
+```
+
+# Comparação dos Modelos: Gamma Log-Linear vs. Modelo Normal
+
+Log-Likelihood (Log-Verossimilhança) - **Modelo Gamma Log-Linear**:
+-83.07791 - **Modelo Normal**: -59.39108
+
+O valor de log-likelihood mais alto (menos negativo) indica um melhor
+ajuste do modelo aos dados. O modelo normal tem um valor de
+log-likelihood mais alto, sugerindo que se ajusta melhor aos dados em
+comparação com o modelo Gamma log-linear.
+
+Critério de Informação de Akaike (AIC) - **Modelo Gamma Log-Linear**:
+174.1558 - **Modelo Normal**: 126.7822
+
+Valores menores de AIC indicam um modelo mais eficiente em termos de
+ajuste aos dados com penalização pela complexidade. O modelo normal
+apresenta um AIC significativamente menor, indicando que é mais
+eficiente e se ajusta melhor aos dados do que o modelo Gamma log-linear.
+
+Critério de Informação de Bayes (BIC) - **Modelo Gamma Log-Linear**:
+186.0351 - **Modelo Normal**: 138.6614
+
+O BIC também penaliza a complexidade do modelo e valores menores indicam
+um ajuste melhor com menor penalização por complexidade. Novamente, o
+modelo normal apresenta um BIC significativamente menor, reforçando que
+é mais adequado para os dados em comparação ao modelo Gamma log-linear.
+
+Com base nos critérios de log-likelihood, AIC e BIC, o **modelo normal**
+é a melhor escolha. Ele não só se ajusta melhor aos dados (conforme
+indicado pelo log-likelihood), mas também é mais eficiente e simples em
+termos de complexidade (conforme indicado pelos valores de AIC e BIC).
+
+Portanto, o modelo normal é preferível ao modelo Gamma log-linear para a
+análise dos seus dados, oferecendo um melhor equilíbrio entre ajuste e
+complexidade.
