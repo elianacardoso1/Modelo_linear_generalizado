@@ -644,6 +644,9 @@ ESSE TEXTO
 
 # Modelo Gama Log-Linear
 
+## Resultados
+
+Utilizamos o mesmo banco de dados do Modelo de Log-Normal
 ```{r}
 interpreta <- function(mod, alpha = 0.05) {
   tab <- summary(mod)
