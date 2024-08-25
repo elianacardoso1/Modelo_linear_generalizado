@@ -67,7 +67,35 @@ source("_src/src.R")
 
 ```
 
-# Análise Descritiva
+
+# Modelo Log-Normal
+
+Este estudo se concentra em uma amostra de 144 países distintos no ano
+de 2014, utilizando um modelo linear normal para explorar como a força
+de trabalho e o estoque de capital influenciam o PIB. A regressão linear
+múltipla será empregada para estimar os coeficientes que quantificam
+essas relações, permitindo-nos compreender melhor os determinantes do
+crescimento econômico.
+
+Essa relação pode ser expressa pela seguinte equação:
+
+$$Y=β0+β1X1+β2X2+...+βpXp+ε$$
+
+Onde:
+
+$Y$ é a variável dependente ( PIB Nacional (Y) em dólares PPP de 2014).
+
+$X1,X2,...,Xp$ são as variáveis independentes ( Força de Trabalho (L)e o
+Estoque de Capital (K) em dólares PPP de 2014).
+
+$β1,β2,...,βp$ são os coeficientes de regressão que representam os
+efeitos das variáveis independentes na variável dependente.
+
+$ε$ é o termo de erro, que representa a variação não explicada pelo
+modelo.
+
+
+## Análise Descritiva
 
 ```{r}
 dta = read_dta("_dta/pwt1001.dta")
@@ -214,31 +242,10 @@ A média do estoque de capital é \$3.058.761, consideravelmente maior que
 a mediana de \$394.841, o que sugere que alguns países têm estoques de
 capital extremamente altos que estão elevando a média.
 
-# Modelo Log-Normal
 
-Este estudo se concentra em uma amostra de 144 países distintos no ano
-de 2014, utilizando um modelo linear normal para explorar como a força
-de trabalho e o estoque de capital influenciam o PIB. A regressão linear
-múltipla será empregada para estimar os coeficientes que quantificam
-essas relações, permitindo-nos compreender melhor os determinantes do
-crescimento econômico.
 
-Essa relação pode ser expressa pela seguinte equação:
 
-$$Y=β0+β1X1+β2X2+...+βpXp+ε$$
-
-Onde:
-
-$Y$ é a variável dependente ( PIB Nacional (Y) em dólares PPP de 2014).
-
-$X1,X2,...,Xp$ são as variáveis independentes ( Força de Trabalho (L)e o
-Estoque de Capital (K) em dólares PPP de 2014).
-
-$β1,β2,...,βp$ são os coeficientes de regressão que representam os
-efeitos das variáveis independentes na variável dependente.
-
-$ε$ é o termo de erro, que representa a variação não explicada pelo
-modelo.
+## Resultados
 
 Para garantir a robustez e confiabilidade dos resultados, optamos por
 realizar uma transformação log-log nas variáveis, considerando que o PIB
@@ -260,8 +267,6 @@ reduz a influência de valores extremos e torna os resultados menos
 sensíveis a distribuições não normais. Portanto, podemos ter maior
 confiança nas conclusões derivadas do modelo, garantindo uma abordagem
 metodológica sólida e resultados mais confiáveis para tomada de decisão.
-
-## Resultados
 
 A análise macroeconômica é fundamental para entender o desenvolvimento
 econômico e social dos países. No contexto da contabilidade nacional,
@@ -643,7 +648,6 @@ eficácia do modelo em classificar a qualidade do crédito.- VOU ADAPTAR
 ESSE TEXTO
 
 # Modelo Gama Log-Linear
-
 ## Resultados
 
 Utilizamos o mesmo banco de dados do Modelo de Log-Normal
