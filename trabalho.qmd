@@ -79,7 +79,7 @@ source("_src/src.R")
 
 # Dados da Penn World Table de 2020
 
-Dois tópicos desse estudo (MODELO LINEAR NORMAL e MODELO GAMA LOG-LINEAR) se concentram em uma amostra de 144 países distintos no ano
+Dois tópicos desse estudo (MODELO LINEAR NORMAL e MODELO GAMA LOG-LINEAR) se concentram em uma amostra de 183 países distintos no ano
 de 2014. Os dois modelos foram utilizados para explorar como a força de trabalho e o estoque de capital influenciam o PIB, desse modo por meio de regressões lineares múltiplas, será estimado os coeficientes que quantificam essas relações, permitindo-nos compreender melhor os determinantes do crescimento econômico.
 
 Essa relação pode ser expressa pela seguinte equação:
@@ -88,26 +88,23 @@ $$Y=β0+β1X1+β2X2+...+βpXp+ε$$
 
 Onde:
 
-$Y$ é a variável dependente ( PIB Nacional (Y) em dólares PPP de 2014).
+- $Y$ é a variável dependente ( PIB Nacional (Y) em dólares PPP de 2014).
 
-$X1,X2,...,Xp$ são as variáveis independentes ( Força de Trabalho (L)e o
+- $X1,X2,...,Xp$ são as variáveis independentes ( Força de Trabalho (L)e o
 Estoque de Capital (K) em dólares PPP de 2014).
 
-$β1,β2,...,βp$ são os coeficientes de regressão que representam os
+- $β1,β2,...,βp$ são os coeficientes de regressão que representam os
 efeitos das variáveis independentes na variável dependente.
 
-$ε$ é o termo de erro, que representa a variação não explicada pelo
-modelo.
+- $ε$ é o termo de erro, que representa a variação não explicada pelo modelo.
 
-Para complementar a análise, é importante entender como os dois modelos — o Modelo Linear Normal e o Modelo Gama Log-Linear — foram utilizados para explorar as relações entre o PIB nacional, a força de trabalho e o estoque de capital. Esses modelos oferecem diferentes abordagens para analisar os dados e podem fornecer insights valiosos sobre os fatores que impulsionam o crescimento econômico.
+Para complementar a análise, é importante entender como os dois modelos — o Modelo Linear Normal e o Modelo Gama Log-Linear — foram utilizados para explorar as relações entre o PIB nacional, a força de trabalho e o estoque de capital. Esses modelos oferecem diferentes abordagens para analisar os dados e podem fornecer insights valiosos sobre os fatores que impulsionam o crescimento econômico:
 
-*Modelo Linear Normal*
-O Modelo Linear Normal é uma aplicação clássica da regressão linear múltipla. Neste contexto, assume-se que a relação entre as variáveis independentes (força de trabalho e estoque de capital) e a variável dependente (PIB) é linear. Isso significa que cada incremento em uma variável independente resulta em um aumento ou diminuição constante na variável dependente, dependendo do sinal e do valor dos coeficientes de regressão.
+**Modelo Linear Normal**: O Modelo Linear Normal é uma aplicação clássica da regressão linear múltipla. Neste contexto, assume-se que a relação entre as variáveis independentes (força de trabalho e estoque de capital) e a variável dependente (PIB) é linear. Isso significa que cada incremento em uma variável independente resulta em um aumento ou diminuição constante na variável dependente, dependendo do sinal e do valor dos coeficientes de regressão.
 
 Este modelo é baseado em algumas suposições, como a normalidade dos resíduos, homocedasticidade (ou seja, a variância constante dos resíduos), e a ausência de multicolinearidade entre as variáveis independentes. Quando essas suposições são satisfeitas, o Modelo Linear Normal fornece estimativas consistentes e eficientes dos coeficientes de regressão, permitindo uma compreensão clara de como cada fator contribui para o PIB.
 
-*Modelo Gama Log-Linear*
-Por outro lado, o Modelo Gama Log-Linear oferece uma abordagem alternativa, especialmente útil quando os dados não atendem às suposições de normalidade e homocedasticidade do modelo linear. Este modelo é particularmente apropriado para situações onde a variável dependente (PIB) assume valores positivos e pode apresentar uma distribuição assimétrica, o que é comum em dados econômicos.
+**Modelo Gama Log-Linear**: Por outro lado, o Modelo Gama Log-Linear oferece uma abordagem alternativa, especialmente útil quando os dados não atendem às suposições de normalidade e homocedasticidade do modelo linear. Este modelo é particularmente apropriado para situações onde a variável dependente (PIB) assume valores positivos e pode apresentar uma distribuição assimétrica, o que é comum em dados econômicos.
 
 No Modelo Gama Log-Linear, a transformação logarítmica é aplicada à variável dependente. Isso permite capturar relações não lineares entre o PIB e as variáveis independentes, como a força de trabalho e o estoque de capital. A distribuição Gama, utilizada nesse modelo, é adequada para modelar a variável dependente em casos onde há heterocedasticidade — ou seja, quando a variabilidade dos dados aumenta com o valor previsto.
 
@@ -142,7 +139,6 @@ dta = merge(df.complete, dta, all.x = TRUE)
 #| label: tbl-t1
 #| tbl-cap: Tabela Resumo das Variáveis Y, L e K.
 
-
 descr_stats <- descr(dta[, c('Y', 'L', 'K')], 
                      stats = c("mean", "sd", "min", "med", "max"), 
                      transpose = FALSE, 
@@ -164,17 +160,26 @@ kable(descr_df, format = "markdown")
 ```{r}
 #| label: fig-y
 #| fig-cap: Histograma PIB Nacional (Y) em dólares PPP de 2014
-
-
-hist_data = hist(dta$Y, xlab = 'Y', main = '', col = 'lightblue')
-# dist. normal (p/ comparação)
-x_values = seq(min(dta$Y), max(dta$Y), length = 100)
-y_values = dnorm(x_values, mean = mean(dta$Y), sd = sd(dta$Y)) 
-y_values = y_values * diff(hist_data$mids[1:2]) * length(dta$Y) 
-lines(x_values, y_values, lwd = 2)
-
-
-
+p <- ggplot(dta, aes(x = Y)) +
+  # Histograma
+  geom_histogram(aes(y = after_stat(density)), fill = 'lightblue', color = 'black', bins = 10) +
+  # Distribuição normal (para comparação)
+  stat_function(fun = dnorm,
+                args = list(mean = mean(dta$Y, na.rm = TRUE), sd = sd(dta$Y, na.rm = TRUE))) +
+  # Label eixo x
+  xlab('Y') +
+  # Label eixo y
+  ylab('Density') +
+  # Tema do plot
+  theme(
+    # Painel
+    panel.background = element_blank(),
+    panel.border = element_blank(),
+    # Eixos
+    axis.line.x = element_line(linewidth = 0.5, linetype = "solid", colour = "black"),
+    axis.line.y = element_line(linewidth = 0.5, linetype = "solid", colour = "black")
+  )
+p
 ```
 
 Observando o @fig-y e @tbl-t1 , o valor mínimo do PIB é \$2.569,
@@ -276,6 +281,78 @@ distorções ou viés que possam surgir devido à falta de normalidade. Isso
 nos permite realizar inferências estatísticas mais confiáveis e
 interpretar os efeitos das variáveis independentes sobre o PIB Nacional
 de forma mais precisa.
+
+```{r}
+# Aplicar transformação logarítmica
+dta$log_Y <- log(dta$Y)
+dta$log_L <- log(dta$L)
+dta$log_K <- log(dta$K)
+
+
+# Histogramas
+
+# Histograma log do PIB Nacional (log_Y)
+p_log_Y <- ggplot(dta, aes(x = log_Y)) +
+  geom_histogram(aes(y = after_stat(density)), fill = 'lightblue', color = 'black', bins = 10) +
+  stat_function(fun = dnorm,
+                args = list(mean = mean(dta$log_Y, na.rm = TRUE), sd = sd(dta$log_Y, na.rm = TRUE)),
+                color = 'red', linewidth = 1) +
+  xlab('log(Y)') +
+  ylab('Density') +
+  theme(
+    panel.background = element_blank(),
+    panel.border = element_blank(),
+    axis.line.x = element_line(linewidth = 0.5, linetype = "solid", colour = "black"),
+    axis.line.y = element_line(linewidth = 0.5, linetype = "solid", colour = "black")
+  )
+
+# Histograma log da Força de Trabalho (log_L)
+p_log_L <- ggplot(dta, aes(x = log_L)) +
+  geom_histogram(aes(y = after_stat(density)), fill = 'lightblue', color = 'black', bins = 10) +
+  stat_function(fun = dnorm,
+                args = list(mean = mean(dta$log_L, na.rm = TRUE), sd = sd(dta$log_L, na.rm = TRUE)),
+                color = 'red', linewidth = 1) +
+  xlab('log(L)') +
+  ylab('Density') +
+  theme(
+    panel.background = element_blank(),
+    panel.border = element_blank(),
+    axis.line.x = element_line(linewidth = 0.5, linetype = "solid", colour = "black"),
+    axis.line.y = element_line(linewidth = 0.5, linetype = "solid", colour = "black")
+  )
+
+# Histograma log do Estoque de Capital (log_K)
+p_log_K <- ggplot(dta, aes(x = log_K)) +
+  geom_histogram(aes(y = after_stat(density)), fill = 'lightblue', color = 'black', bins = 10) +
+  stat_function(fun = dnorm,
+                args = list(mean = mean(dta$log_K, na.rm = TRUE), sd = sd(dta$log_K, na.rm = TRUE)),
+                color = 'red', linewidth = 1) +
+  xlab('log(K)') +
+  ylab('Density') +
+  theme(
+    panel.background = element_blank(),
+    panel.border = element_blank(),
+    axis.line.x = element_line(linewidth = 0.5, linetype = "solid", colour = "black"),
+    axis.line.y = element_line(linewidth = 0.5, linetype = "solid", colour = "black")
+  )
+
+# Exibir os gráficos
+p_log_Y
+
+```
+
+```{r}
+
+p_log_L
+
+```
+
+
+```{r}
+
+p_log_K
+
+```
 
 Essa estratégia de transformação aumenta a robustez da análise, pois
 reduz a influência de valores extremos e torna os resultados menos
@@ -419,6 +496,24 @@ ggresiduals(fit)
 #testResiduals(fit)
 ```
 
+```{r}
+#testResiduals(fit)
+
+# Criando o data frame com os resultados dos testes
+test_results <- data.frame(
+  Teste = c("Shapiro-Wilk Normality Test", 
+            "Non-constant Variance Score Test", 
+            "Durbin-Watson Test for Autocorrelated Errors"),
+  Estatística = c("W = 0.96", 
+                  "Chisquare = 5.338458", 
+                  "D-W Statistic = 2.133801"),
+  `p-valor` = c(0.0003379, 0.02086, 0.42))
+
+kable(test_results, caption = "Resultados dos Testes de Resíduos") %>%
+  kable_styling(full_width = F, position = "center")
+
+```
+
 Com base na análise da tabela @fig-t3, podemos concluir o seguinte sobre
 o ajuste do modelo de regressão:
 
@@ -449,7 +544,8 @@ independência dos resíduos e linearidade entre as variáveis.
 
 ### Resultados
 
-Utilizamos o mesmo banco de dados do Modelo de Log-Normal
+Utilizamos o mesmo banco de dados do Modelo de Log-Normal.Por meio da tabela abaixo é possível verificar como foi o ajuste das variáveis ao modelo de gama log-linear:
+
 ```{r}
 interpreta <- function(mod, alpha = 0.05) {
   tab <- summary(mod)
@@ -554,10 +650,6 @@ t_statistic <- (soma_alpha_beta - 1) / se_alpha_beta
 p_value <- 2 * pt(-abs(t_statistic), df = df.residual(fit_gamma ))
 
 
-
-
-
-
 ```
 
 ```{r}
@@ -611,6 +703,29 @@ ggresiduals(fit_gamma )
 
 ```
 
+```{r}
+fit_gammaa <-bptest(fit_gamma)
+
+# Teste de Durbin-Watson
+dw_test_gamma <- dwtest(fit_gamma)
+```
+
+```{r}
+# Criando a tabela de resultados
+test_results <- data.frame(
+  Teste = c("Breusch-Pagan", "Durbin-Watson"),
+  Estatística = c(2.6679, 2.1338),
+  `Valor-p` = c(0.2634, 0.7801),
+  Decisão = c(
+    ifelse(0.2634 < 0.05, "Rejeitamos H0", "Não rejeitamos H0"),
+    ifelse(0.7801 < 0.05, "Rejeitamos H0", "Não rejeitamos H0")
+  )
+)
+
+# Exibir a tabela usando kable
+kable(test_results, caption = "Resultados dos Testes de Breusch-Pagan e Durbin-Watson") %>%
+  kable_styling(full_width = F, position = "center")
+```
 
 Com base na análise dos resíduos, incluindo os testes de Breusch-Pagan e Durbin-Watson, podemos concluir o seguinte sobre o ajuste do modelo de regressão:
 
@@ -719,7 +834,16 @@ A análise foca na construção e avaliação de um modelo de **regressão logí
 
 $$log(p / (1 - p)) = β0 + β1 * X1 + β2 * X2 + ... + βp * Xp$$
 
-$p$ é a probabilidade de um cliente ser classificado como "Good". $X_1, X_2, ..., X_p$ são as variáveis independentes (como histórico de pagamentos, dívida pendente, etc.) $\beta_0, \beta_1, ..., \beta_p$ são os coeficientes que medem o impacto de cada variável independente na probabilidade de ser classificado como "Good".
+Onde:
+
+- $p$ é a probabilidade de um cliente ser classificado como "Good" (cliente ser um bom pagador).
+
+
+- $1-p$ é a probabilidade de um cliente ser classificado como "Poor" (cliente possui um histórico problemático).
+
+- $X_1, X_2, ..., X_p$ são as variáveis independentes (como histórico de pagamentos, dívida pendente, etc.)
+
+- $\beta_0, \beta_1, ..., \beta_p$ são os coeficientes que medem o impacto de cada variável independente na probabilidade de ser classificado como "Good".
 
 Como parte da análise, será explorado o ajuste do modelo, avaliando os resíduos para verificar a adequação do modelo. 
 
@@ -797,37 +921,25 @@ boxplot(Changed_Credit_Limit ~ Credit_Score, data = dta,
 ```
 
 ```{r}
-# Função para formatar os resultados dos testes qui-quadrado sem arredondar o valor p
-interpreta_chisq <- function(test, nome_variaveis) {
-  # Extrai os resultados dos testes
-  estatistica <- round(test$statistic, 4)
-  df <- test$parameter
-  pvalor <- test$p.value  # Não arredonda o valor p
-  
-  # Cria um data frame com os resultados
-  tabela <- data.frame(
-    Variáveis = nome_variaveis,
-    Estatística = estatistica,
-    DF = df,
-    Pvalor = pvalor,
-    stringsAsFactors = FALSE
-  )
-  
-  return(tabela)
-}
 
 # Executa os testes qui-quadrado
 test1 <- chisq.test(x = dta$Credit_Mix, y = dta$Credit_Score)
 test2 <- chisq.test(x = dta$Payment_of_Min_Amount, y = dta$Credit_Score)
 
-# Cria a tabela com os resultados
-resultado_tabelado <- rbind(
-  interpreta_chisq(test1, "Credit_Mix e Credit_Score"),
-  interpreta_chisq(test2, "Payment_of_Min_Amount e Credit_Score")
+chi_square_results <- data.frame(
+  Teste = c("Credit_Mix vs Credit_Score", "Payment_of_Min_Amount vs Credit_Score"),
+  Estatística = c(14606, 14578),
+  `Graus de Liberdade` = c(2, 1),
+  `Valor-p` = c("< 2.2e-16", "< 2.2e-16"),
+  Decisão = c(
+    "Rejeitamos H0",
+    "Rejeitamos H0"
+  )
 )
 
-# Exibe a tabela formatada
-kable(resultado_tabelado)
+# Exibir a tabela usando kable
+kable(chi_square_results, caption = "Resultados dos Testes Qui-Quadrado") %>%
+  kable_styling(full_width = F, position = "center")
 
 ```
 
@@ -842,31 +954,25 @@ O modelo de regressão logística ajustado para classificar o crédito dos clien
 Além disso, para a construção do modelo foram utilizadas as seguintes variáveis: 
 
 ```{r}
-# Função para interpretar os resultados do modelo de regressão logística
-interpreta_logit <- function(mod, alpha = 0.05) {
-  tab <- summary(mod)
-  tabela <- as.data.frame(coef(tab))
-  tabela <- cbind(Covariavel = rownames(tabela), tabela)
-  tabela <- tabela %>%
-    mutate(
-      Estimacao = round(Estimate, 4),
-      ErroPadrao = round(`Std. Error`, 4),
-      Pvalor = `Pr(>|z|)` # Note que aqui é Pr(>|z|) para modelos logísticos
-    ) %>%
-    select(Estimacao, ErroPadrao, Pvalor)
-  
-  return(tabela)
-}
-
 # Ajuste do modelo de regressão logística
 out <- glm(Credit_Score ~ Credit_Mix + Outstanding_Debt + Payment_of_Min_Amount + Changed_Credit_Limit, 
            family = binomial(link = logit), data = dta)
 
-# Criação da tabela com os resultados
-resultado_tabelado <- interpreta_logit(out)
+tabela<-as.data.frame(coef(summary(out)))
+tabela <- cbind(Covariavel = rownames(tabela), tabela)
 
-# Exibindo a tabela formatada
-kable(resultado_tabelado)
+# Criação da tabela com os resultados
+tabela_formatada <- data.frame(
+  Variável = tabela$Covariavel,
+  Estimacao = tabela$Estimate,
+  ErroPadrao = tabela$`Std. Error`,
+  Pvalor = ifelse(tabela$`Pr(>|z|)` < 0.05, "< 0.05", format(tabela$`Pr(>|z|)`, digits = 4, nsmall = 4))
+)
+
+# Exibindo a tabela
+kable(tabela_formatada, caption = "Resultados do Modelo de Regressão Logística") %>%
+  kable_styling(full_width = F, position = "center")
+
 
 ```
 
@@ -907,11 +1013,26 @@ out_reescalado = glm(Credit_Score ~
             Payment_of_Min_Amount + Changed_Credit_Limit, 
             family = binomial(link = logit),
             data = dta)
-# Criação da tabela com os resultados
-resultado_tabelado2 <- interpreta_logit(out_reescalado)
 
-# Exibindo a tabela formatada
-kable(resultado_tabelado2)
+
+
+tabela<-as.data.frame(coef(summary(out_reescalado)))
+tabela <- cbind(Covariavel = rownames(tabela), tabela)
+
+# Criação da tabela com os resultados
+tabela_formatada <- data.frame(
+  Variável = tabela$Covariavel,
+  Estimacao = tabela$Estimate,
+  ErroPadrao = tabela$`Std. Error`,
+ Pvalor = ifelse(tabela$`Pr(>|z|)` < 0.05, "< 0.05", format(tabela$`Pr(>|z|)`, digits = 4, nsmall = 4)))
+
+tabela_formatada$Pvalor <- format(tabela_formatada$Pvalor, scientific = TRUE, digits = 5)
+
+# Exibindo a tabela
+kable(tabela_formatada, caption = "Resultados do Modelo de Regressão Logística") %>%
+  kable_styling(full_width = F, position = "center")
+
+
 
 
 ```
