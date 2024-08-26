@@ -23,6 +23,7 @@ format:
     theme: flatly
   pdf: 
     documentclass: scrreprt
+    margin: 1in
   docx: default
 editor:
   markdown:
@@ -31,9 +32,8 @@ editor_options:
   chunk_output_type: console
 output: 
   pdf_document:
-    margin: 1in
-    df_print:
-      digits: 3
+    fig_caption: true
+    df_print: kable
   word_document:
     fig_caption: true
     df_print: kable
@@ -48,7 +48,9 @@ rm(list = ls())
 
 if(!require(remotes)) install.packages("remotes")
 remotes::install_github("fndemarqui/reglin")
+```
 
+```{r, include=FALSE}
 #install.packages("tinytex")
 library(tinytex)
 #tinytex::install_tinytex()  # Para instalar uma distribuição LaTeX mínima
@@ -76,11 +78,15 @@ source("_src/src.R")
 
 ```
 
-
 # Dados da Penn World Table de 2020
 
-Dois tópicos desse estudo (MODELO LINEAR NORMAL e MODELO GAMA LOG-LINEAR) se concentram em uma amostra de 183 países distintos no ano
-de 2014. Os dois modelos foram utilizados para explorar como a força de trabalho e o estoque de capital influenciam o PIB, desse modo por meio de regressões lineares múltiplas, será estimado os coeficientes que quantificam essas relações, permitindo-nos compreender melhor os determinantes do crescimento econômico.
+Dois tópicos desse estudo (MODELO LINEAR NORMAL e MODELO GAMA
+LOG-LINEAR) se concentram em uma amostra de 183 países distintos no ano
+de 2014. Os dois modelos foram utilizados para explorar como a força de
+trabalho e o estoque de capital influenciam o PIB, desse modo por meio
+de regressões lineares múltiplas, será estimado os coeficientes que
+quantificam essas relações, permitindo-nos compreender melhor os
+determinantes do crescimento econômico.
 
 Essa relação pode ser expressa pela seguinte equação:
 
@@ -88,27 +94,61 @@ $$Y=β0+β1X1+β2X2+...+βpXp+ε$$
 
 Onde:
 
-- $Y$ é a variável dependente ( PIB Nacional (Y) em dólares PPP de 2014).
+-   $Y$ é a variável dependente ( PIB Nacional (Y) em dólares PPP de
+    2014).
 
-- $X1,X2,...,Xp$ são as variáveis independentes ( Força de Trabalho (L)e o
-Estoque de Capital (K) em dólares PPP de 2014).
+-   $X1,X2,...,Xp$ são as variáveis independentes ( Força de Trabalho
+    (L)e o Estoque de Capital (K) em dólares PPP de 2014).
 
-- $β1,β2,...,βp$ são os coeficientes de regressão que representam os
-efeitos das variáveis independentes na variável dependente.
+-   $β1,β2,...,βp$ são os coeficientes de regressão que representam os
+    efeitos das variáveis independentes na variável dependente.
 
-- $ε$ é o termo de erro, que representa a variação não explicada pelo modelo.
+-   $ε$ é o termo de erro, que representa a variação não explicada pelo
+    modelo.
 
-Para complementar a análise, é importante entender como os dois modelos — o Modelo Linear Normal e o Modelo Gama Log-Linear — foram utilizados para explorar as relações entre o PIB nacional, a força de trabalho e o estoque de capital. Esses modelos oferecem diferentes abordagens para analisar os dados e podem fornecer insights valiosos sobre os fatores que impulsionam o crescimento econômico:
+Para complementar a análise, é importante entender como os dois modelos
+— o Modelo Linear Normal e o Modelo Gama Log-Linear — foram utilizados
+para explorar as relações entre o PIB nacional, a força de trabalho e o
+estoque de capital. Esses modelos oferecem diferentes abordagens para
+analisar os dados e podem fornecer insights valiosos sobre os fatores
+que impulsionam o crescimento econômico:
 
-**Modelo Linear Normal**: O Modelo Linear Normal é uma aplicação clássica da regressão linear múltipla. Neste contexto, assume-se que a relação entre as variáveis independentes (força de trabalho e estoque de capital) e a variável dependente (PIB) é linear. Isso significa que cada incremento em uma variável independente resulta em um aumento ou diminuição constante na variável dependente, dependendo do sinal e do valor dos coeficientes de regressão.
+**Modelo Linear Normal**: O Modelo Linear Normal é uma aplicação
+clássica da regressão linear múltipla. Neste contexto, assume-se que a
+relação entre as variáveis independentes (força de trabalho e estoque de
+capital) e a variável dependente (PIB) é linear. Isso significa que cada
+incremento em uma variável independente resulta em um aumento ou
+diminuição constante na variável dependente, dependendo do sinal e do
+valor dos coeficientes de regressão.
 
-Este modelo é baseado em algumas suposições, como a normalidade dos resíduos, homocedasticidade (ou seja, a variância constante dos resíduos), e a ausência de multicolinearidade entre as variáveis independentes. Quando essas suposições são satisfeitas, o Modelo Linear Normal fornece estimativas consistentes e eficientes dos coeficientes de regressão, permitindo uma compreensão clara de como cada fator contribui para o PIB.
+Este modelo é baseado em algumas suposições, como a normalidade dos
+resíduos, homocedasticidade (ou seja, a variância constante dos
+resíduos), e a ausência de multicolinearidade entre as variáveis
+independentes. Quando essas suposições são satisfeitas, o Modelo Linear
+Normal fornece estimativas consistentes e eficientes dos coeficientes de
+regressão, permitindo uma compreensão clara de como cada fator contribui
+para o PIB.
 
-**Modelo Gama Log-Linear**: Por outro lado, o Modelo Gama Log-Linear oferece uma abordagem alternativa, especialmente útil quando os dados não atendem às suposições de normalidade e homocedasticidade do modelo linear. Este modelo é particularmente apropriado para situações onde a variável dependente (PIB) assume valores positivos e pode apresentar uma distribuição assimétrica, o que é comum em dados econômicos.
+**Modelo Gama Log-Linear**: Por outro lado, o Modelo Gama Log-Linear
+oferece uma abordagem alternativa, especialmente útil quando os dados
+não atendem às suposições de normalidade e homocedasticidade do modelo
+linear. Este modelo é particularmente apropriado para situações onde a
+variável dependente (PIB) assume valores positivos e pode apresentar uma
+distribuição assimétrica, o que é comum em dados econômicos.
 
-No Modelo Gama Log-Linear, a transformação logarítmica é aplicada à variável dependente. Isso permite capturar relações não lineares entre o PIB e as variáveis independentes, como a força de trabalho e o estoque de capital. A distribuição Gama, utilizada nesse modelo, é adequada para modelar a variável dependente em casos onde há heterocedasticidade — ou seja, quando a variabilidade dos dados aumenta com o valor previsto.
+No Modelo Gama Log-Linear, a transformação logarítmica é aplicada à
+variável dependente. Isso permite capturar relações não lineares entre o
+PIB e as variáveis independentes, como a força de trabalho e o estoque
+de capital. A distribuição Gama, utilizada nesse modelo, é adequada para
+modelar a variável dependente em casos onde há heterocedasticidade — ou
+seja, quando a variabilidade dos dados aumenta com o valor previsto.
 
-Essa abordagem é especialmente útil para capturar efeitos multiplicativos, onde as variáveis independentes influenciam a variável dependente de forma proporcional, em vez de aditiva. O Modelo Gama Log-Linear pode, portanto, revelar nuances e complexidades na relação entre os fatores estudados e o crescimento econômico que o modelo linear normal pode não captar.
+Essa abordagem é especialmente útil para capturar efeitos
+multiplicativos, onde as variáveis independentes influenciam a variável
+dependente de forma proporcional, em vez de aditiva. O Modelo Gama
+Log-Linear pode, portanto, revelar nuances e complexidades na relação
+entre os fatores estudados e o crescimento econômico que o modelo linear
+normal pode não captar.
 
 ## Modelo Linear Normal
 
@@ -149,11 +189,14 @@ descr_df <- as.data.frame(descr_stats)
 
 # Adicionando a coluna de Estatísticas
 descr_df <- descr_df %>%
-  select( everything())
+  dplyr::select( everything())
 
 # Exibindo a tabela formatada em markdown
 library(knitr)
-kable(descr_df, format = "markdown")
+kable(descr_df, format = "markdown")%>%
+  kable_styling(full_width = F, position = "center") %>% 
+    column_spec(2, width = "17em")  # Ajuste a largura conforme necessário
+
 
 ```
 
@@ -231,8 +274,7 @@ países com a força de trabalho outlier.
 #| fig-cap: Histograma Estoque de Capital (K) em dólares PPP de 2014)
 #| label: fig-k
 
-## histograma K
-# invocando ggplot
+
 p = ggplot(dta, aes(x = K)) +
   # histograma
   geom_histogram(aes(x = K, after_stat(density)), fill = 'lightblue', col = 'black', bins = 10) +
@@ -256,10 +298,10 @@ p
 
 ```
 
-Analisando os valores da @tbl-t1 e @fig-k ,
-observamos que o estoque de capital varia amplamente, de \$7.345 a
-\$64.118.472, indicando diferenças significativas no nível de
-investimento em capital produtivo entre os países.
+Analisando os valores da @tbl-t1 e @fig-k , observamos que o estoque de
+capital varia amplamente, de \$7.345 a \$64.118.472, indicando
+diferenças significativas no nível de investimento em capital produtivo
+entre os países.
 
 A média do estoque de capital é \$3.058.761, consideravelmente maior que
 a mediana de \$394.841, o que sugere que alguns países têm estoques de
@@ -347,7 +389,6 @@ p_log_L
 
 ```
 
-
 ```{r}
 
 p_log_K
@@ -381,11 +422,6 @@ pesquisadores a identificar áreas-chave para intervenção e investimento,
 promovendo um desenvolvimento econômico sustentável e inclusivo.
 
 ```{r}
-#| label: tbl-t2
-#| tbl-cap: Ajuste do Modelo de Regressão Log-Normal 
-
-fit = lm(log(Y) ~ log(L) + log(K), data = dta)
-# resultados
 interpreta <- function(mod, alpha = 0.05) {
   tab <- summary(mod)
   tabela <- as.data.frame(coef(tab))
@@ -401,10 +437,18 @@ interpreta <- function(mod, alpha = 0.05) {
         TRUE ~ paste0(" ", format(`Pr(>|t|)`, digits = 3))
       )
     ) %>%
-    select( Estimação, Pvalor, sig)
+    dplyr::select( Estimação, Pvalor, sig)
   
   return(tabela)
 }
+```
+
+```{r}
+#| label: tbl-t2
+#| tbl-cap: Ajuste do Modelo de Regressão Log-Normal 
+
+fit = lm(log(Y) ~ log(L) + log(K), data = dta)
+
 
 fit %>% interpreta()                           
 ```
@@ -471,20 +515,24 @@ resultados <- data.frame(
 )
 
 # Exibir a tabela
-kable(resultados, col.names = c("Estatística", "Valor"), format = "markdown", digits = 4)
+kable(resultados, col.names = c("Estatística", "Valor"), format = "markdown", digits = 4)%>%
+  kable_styling(full_width = F, position = "center") %>% 
+    column_spec(2, width = "17em")  # Ajuste a largura conforme necessário
+
 
 ```
 
-Na @tbl-teste1, com teste da Teste $𝐻0 : 𝛼 + 𝛽 = 1$ contra $𝐻1 : 𝛼 + 𝛽 ≠ 1$,
-obtivemos um p-valor de aproximadamente 0,943. Não rejeitamos a hipótese
-nula $H_0$ ao nível de 5% de significância. Isso indica que os dados
-não fornecem evidências suficientes para concluir que a soma de $\alpha$
-e $\beta$ é diferente de 1. Em outras palavras, a suposição de retornos
-constantes à escala $\alpha + \beta = 1$ é razoável para o ano
-analisado. Isso sugere que, com base nos dados, um aumento proporcional
-igual na força de trabalho (L) e no capital (K) resulta em um aumento
-proporcional na produção (Y), confirmando a hipótese de retornos
-constantes à escala na função de produção Cobb-Douglas.
+Na @tbl-teste1, com teste da Teste $𝐻0 : 𝛼 + 𝛽 = 1$ contra
+$𝐻1 : 𝛼 + 𝛽 ≠ 1$, obtivemos um p-valor de aproximadamente 0,943. Não
+rejeitamos a hipótese nula $H_0$ ao nível de 5% de significância. Isso
+indica que os dados não fornecem evidências suficientes para concluir
+que a soma de $\alpha$ e $\beta$ é diferente de 1. Em outras palavras, a
+suposição de retornos constantes à escala $\alpha + \beta = 1$ é
+razoável para o ano analisado. Isso sugere que, com base nos dados, um
+aumento proporcional igual na força de trabalho (L) e no capital (K)
+resulta em um aumento proporcional na produção (Y), confirmando a
+hipótese de retornos constantes à escala na função de produção
+Cobb-Douglas.
 
 ### Análise dos Resíduos
 
@@ -510,7 +558,9 @@ test_results <- data.frame(
   `p-valor` = c(0.0003379, 0.02086, 0.42))
 
 kable(test_results, caption = "Resultados dos Testes de Resíduos") %>%
-  kable_styling(full_width = F, position = "center")
+  kable_styling(full_width = F, position = "center") %>% 
+    column_spec(2, width = "17em")  # Ajuste a largura conforme necessário
+
 
 ```
 
@@ -544,7 +594,9 @@ independência dos resíduos e linearidade entre as variáveis.
 
 ### Resultados
 
-Utilizamos o mesmo banco de dados do Modelo de Log-Normal.Por meio da tabela abaixo é possível verificar como foi o ajuste das variáveis ao modelo de gama log-linear:
+Utilizamos o mesmo banco de dados do Modelo de Log-Normal.Por meio da
+tabela abaixo é possível verificar como foi o ajuste das variáveis ao
+modelo de gama log-linear:
 
 ```{r}
 interpreta <- function(mod, alpha = 0.05) {
@@ -563,7 +615,7 @@ interpreta <- function(mod, alpha = 0.05) {
         TRUE ~ paste0(" ", format(`Pr(>|t|)`, digits = 3))
       )
     ) %>%
-    select(Estimacao, ErroPadrao, Pvalor, sig)
+    dplyr::select(Estimacao, ErroPadrao, Pvalor, sig)
   
   return(tabela)
 }
@@ -612,18 +664,18 @@ estatisticamente significativo, indicando que ele desempenha um papel
 importante na modelagem da variável dependente 𝑌𝑖, ao nível de 5% de
 significância.
 
-O coeficiente para log(L) é 0.02371, indicando que um aumento de 1%
-na força de trabalho (L) leva a um aumento de aproximadamente 0.024% na
+O coeficiente para log(L) é 0.02371, indicando que um aumento de 1% na
+força de trabalho (L) leva a um aumento de aproximadamente 0.024% na
 produção, mantendo o capital constante. O p-valor extremamente pequeno
 indica que este coeficiente é altamente significativo, o que valida a
 importância da força de trabalho na determinação da produção no modelo.
 
-O coeficiente para log(K) é 0.06012, sugerindo que um aumento de 1%
-no capital (K) resulta em um aumento de aproximadamente 0.060% na
-produção, mantendo a força de trabalho constante. Com um p-valor
-extremamente baixo, esse coeficiente é altamente significativo,
-demonstrando que o capital tem uma influência importante e
-estatisticamente significativa na produção.
+O coeficiente para log(K) é 0.06012, sugerindo que um aumento de 1% no
+capital (K) resulta em um aumento de aproximadamente 0.060% na produção,
+mantendo a força de trabalho constante. Com um p-valor extremamente
+baixo, esse coeficiente é altamente significativo, demonstrando que o
+capital tem uma influência importante e estatisticamente significativa
+na produção.
 
 O parâmetro de dispersão estimado é 0.00135, o que indica que há uma
 baixa variabilidade dos dados em torno da média ajustada pelo modelo.
@@ -669,13 +721,18 @@ resultados <- data.frame(
 )
 
 # Exibir a tabela
-kable(resultados)
+kable(resultados)%>%
+  kable_styling(full_width = F, position = "center") %>% 
+    column_spec(2, width = "17em")  # Ajuste a largura conforme necessário
+
 
 ```
 
-Decisão sobre Teste $𝐻0 : 𝛼 + 𝛽 = 1$ contra $𝐻1 : 𝛼 + 𝛽 ≠ 1$: (@tbl-teste) Como o valor-p é extremamente pequeno, rejeitamos a hipótese nula $H_0$ indicando que a soma de $\alpha$ e $\beta$ é significativamente diferente de 1. Isso
-significa que a hipótese de retornos constantes à escala não é válida
-para os dados analisados.
+Decisão sobre Teste $𝐻0 : 𝛼 + 𝛽 = 1$ contra $𝐻1 : 𝛼 + 𝛽 ≠ 1$:
+(@tbl-teste) Como o valor-p é extremamente pequeno, rejeitamos a
+hipótese nula $H_0$ indicando que a soma de $\alpha$ e $\beta$ é
+significativamente diferente de 1. Isso significa que a hipótese de
+retornos constantes à escala não é válida para os dados analisados.
 
 Retornos constantes à escala implicam que, se ambos os insumos (L e K)
 aumentarem na mesma proporção, a produção $Y_i$ também aumentará na
@@ -696,7 +753,7 @@ diminui, levando a um crescimento menos eficiente da produção.
 
 ```{r}
 #| tbl-cap: Gráfico de Análise de resíduos 
-#| label: Gráfico de Análise de resíduos 
+#| label: tbl-gamma1
 
 library(lmtest)
 ggresiduals(fit_gamma )
@@ -724,10 +781,14 @@ test_results <- data.frame(
 
 # Exibir a tabela usando kable
 kable(test_results, caption = "Resultados dos Testes de Breusch-Pagan e Durbin-Watson") %>%
-  kable_styling(full_width = F, position = "center")
+  kable_styling(full_width = F, position = "center")%>%
+    column_spec(2, width = "17em")  # Ajuste a largura conforme necessário
+
 ```
 
-Com base na análise dos resíduos, incluindo os testes de Breusch-Pagan e Durbin-Watson, podemos concluir o seguinte sobre o ajuste do modelo de regressão:
+Com base na análise dos resíduos, incluindo os testes de Breusch-Pagan e
+Durbin-Watson, podemos concluir o seguinte sobre o ajuste do modelo de
+regressão:
 
 **Homocedasticidade:** - A variância dos resíduos parece ser constante
 em toda a faixa dos valores ajustados. Com o teste de Teste de
@@ -753,10 +814,7 @@ quanto a essa suposição.
 aos valores ajustados, indicando não linearidade entre as variáveis
 independentes e dependentes.
 
-
 ## Comparação dos Modelos: Gamma Log-Linear vs. Modelo Normal
-
-
 
 ```{r,include=FALSE}
 # Obter o log-likelihood dos modelos
@@ -788,7 +846,10 @@ model_comparison <- data.frame(
 )
 
 # Exibir a tabela usando kable
-kable(model_comparison, caption = "Comparação dos Modelos Gamma Log-Linear e Normal")
+kable(model_comparison, caption = "Comparação dos Modelos Gamma Log-Linear e Normal")%>%
+  kable_styling(full_width = F, position = "center") %>% 
+    column_spec(2, width = "17em")  # Ajuste a largura conforme necessário
+
 ```
 
 Log-Likelihood (Log-Verossimilhança) - **Modelo Gamma Log-Linear**:
@@ -828,28 +889,47 @@ complexidade.
 
 ## Modelo Logistico
 
-Para este estudo, utilizamos uma base de dados obtida do Kaggle, que contém informações detalhadas sobre clientes de uma instituição financeira. O objetivo principal é desenvolver um modelo de machine learning para classificar o crédito dos clientes em diferentes faixas de risco, otimizando os processos de decisão e reduzindo esforços manuais. A base de dados inclui 100.000 observações e 28 variáveis, como idade, ocupação, renda anual, número de contas bancárias e histórico de pagamentos.
+Para este estudo, utilizamos uma base de dados obtida do Kaggle, que
+contém informações detalhadas sobre clientes de uma instituição
+financeira. O objetivo principal é desenvolver um modelo de machine
+learning para classificar o crédito dos clientes em diferentes faixas de
+risco, otimizando os processos de decisão e reduzindo esforços manuais.
+A base de dados inclui 100.000 observações e 28 variáveis, como idade,
+ocupação, renda anual, número de contas bancárias e histórico de
+pagamentos.
 
-A análise foca na construção e avaliação de um modelo de **regressão logística**, adequado para situações em que a variável dependente é categórica, como a classificação de crédito ("Poor" e "Good"). A **regressão logística** estima a probabilidade de um evento binário ocorrer e classifica as observações em categorias. A equação do modelo logístico é expressa como:
+A análise foca na construção e avaliação de um modelo de **regressão
+logística**, adequado para situações em que a variável dependente é
+categórica, como a classificação de crédito ("Poor" e "Good"). A
+**regressão logística** estima a probabilidade de um evento binário
+ocorrer e classifica as observações em categorias. A equação do modelo
+logístico é expressa como:
 
-$$log(p / (1 - p)) = β0 + β1 * X1 + β2 * X2 + ... + βp * Xp$$
+$$log(p / (1 - p)) = β0 + β1 * X_1 + β2 * X_2 + ... + βp * X_p$$
 
 Onde:
 
-- $p$ é a probabilidade de um cliente ser classificado como "Good" (cliente ser um bom pagador).
+-   $p$ é a probabilidade de um cliente ser classificado como "Good"
+    (cliente ser um bom pagador).
 
+-   $1-p$ é a probabilidade de um cliente ser classificado como "Poor"
+    (cliente possui um histórico problemático).
 
-- $1-p$ é a probabilidade de um cliente ser classificado como "Poor" (cliente possui um histórico problemático).
+-   $X_1, X_2, ..., X_p$ são as variáveis independentes (como histórico
+    de pagamentos, dívida pendente, etc.)
 
-- $X_1, X_2, ..., X_p$ são as variáveis independentes (como histórico de pagamentos, dívida pendente, etc.)
+-   $\beta_0, \beta_1, ..., \beta_p$ são os coeficientes que medem o
+    impacto de cada variável independente na probabilidade de ser
+    classificado como "Good".
 
-- $\beta_0, \beta_1, ..., \beta_p$ são os coeficientes que medem o impacto de cada variável independente na probabilidade de ser classificado como "Good".
-
-Como parte da análise, será explorado o ajuste do modelo, avaliando os resíduos para verificar a adequação do modelo. 
+Como parte da análise, será explorado o ajuste do modelo, avaliando os
+resíduos para verificar a adequação do modelo.
 
 ```{r}
 ## carregando dados: base teste (Kaggle)
 ## - os dados são carregados no objeto "dta"
+setwd("C:/Users/eliana.cardoso/OneDrive - Fundação Dom Cabral/Documentos/GitHub/Trabalhodemlg")
+
 dta_teste = read.csv('_dta/test.csv') #credit_scoring
 dta_treino = read.csv('_dta/train.csv')
 
@@ -888,8 +968,8 @@ summary_dta3<-summary(dta)
 
 ```
 
-
 ```{r}
+
 summary_table <- data.frame(
   Variável = c("Credit_Score", "Credit_Mix", "Outstanding_Debt", "Payment_of_Min_Amount", "Changed_Credit_Limit"),
   Estatística = c(
@@ -908,7 +988,23 @@ kable(summary_table, caption = "Resumo Descritivo das Variáveis") %>%
 
 ```
 
-A análise descritiva das variáveis na base de dados dta revela que, dos 32.076 clientes analisados, 12.192 foram classificados como "Good" e 19.884 como "Poor", indicando que a maioria dos clientes tem uma classificação de crédito ruim. A variável Credit_Mix mostra que a maioria dos clientes tem uma mistura de crédito considerada "Good", seguida por "Standard" e "Bad", o que pode influenciar a classificação final de risco. Em relação à dívida pendente, os valores variam significativamente, com uma mediana de 1.360,45 e uma média de 1.593,26, sugerindo que alguns clientes têm dívidas elevadas, o que pode aumentar o risco de crédito. Quanto ao pagamento do valor mínimo, 17.644 clientes o fizeram, enquanto 14.432 não, indicando que pagar apenas o valor mínimo pode ser um indicador de problemas financeiros. A variável Changed_Credit_Limit mostra variações entre -6,48 e 35,82, com uma mediana de 8,56, sugerindo mudanças no comportamento de crédito ao longo do tempo. Essas observações iniciais são fundamentais para a construção do modelo de regressão logística e devem orientar a escolha de variáveis e a interpretação dos resultados.
+A análise descritiva das variáveis na base de dados dta revela que, dos
+32.076 clientes analisados, 12.192 foram classificados como "Good" e
+19.884 como "Poor", indicando que a maioria dos clientes tem uma
+classificação de crédito ruim. A variável Credit_Mix mostra que a
+maioria dos clientes tem uma mistura de crédito considerada "Good",
+seguida por "Standard" e "Bad", o que pode influenciar a classificação
+final de risco. Em relação à dívida pendente, os valores variam
+significativamente, com uma mediana de 1.360,45 e uma média de 1.593,26,
+sugerindo que alguns clientes têm dívidas elevadas, o que pode aumentar
+o risco de crédito. Quanto ao pagamento do valor mínimo, 17.644 clientes
+o fizeram, enquanto 14.432 não, indicando que pagar apenas o valor
+mínimo pode ser um indicador de problemas financeiros. A variável
+Changed_Credit_Limit mostra variações entre -6,48 e 35,82, com uma
+mediana de 8,56, sugerindo mudanças no comportamento de crédito ao longo
+do tempo. Essas observações iniciais são fundamentais para a construção
+do modelo de regressão logística e devem orientar a escolha de variáveis
+e a interpretação dos resultados.
 
 ```{r}
 # Análise associativa preliminar
@@ -943,15 +1039,43 @@ kable(chi_square_results, caption = "Resultados dos Testes Qui-Quadrado") %>%
 
 ```
 
-A análise associativa preliminar entre as variáveis do estudo revela insights importantes sobre os padrões de crédito dos clientes. Através dos boxplots, observa-se que a dívida pendente (Outstanding_Debt) tende a ser maior entre os clientes com uma classificação de crédito "Poor" em comparação com aqueles classificados como "Good". Isso sugere que clientes com maiores dívidas são mais propensos a terem uma classificação de crédito inferior. Além disso, as mudanças no limite de crédito (Changed_Credit_Limit) também variam significativamente entre as classificações de crédito, com clientes de crédito "Poor" exibindo maior variação, o que pode indicar instabilidade financeira.
+A análise associativa preliminar entre as variáveis do estudo revela
+insights importantes sobre os padrões de crédito dos clientes. Através
+dos boxplots, observa-se que a dívida pendente (Outstanding_Debt) tende
+a ser maior entre os clientes com uma classificação de crédito "Poor" em
+comparação com aqueles classificados como "Good". Isso sugere que
+clientes com maiores dívidas são mais propensos a terem uma
+classificação de crédito inferior. Além disso, as mudanças no limite de
+crédito (Changed_Credit_Limit) também variam significativamente entre as
+classificações de crédito, com clientes de crédito "Poor" exibindo maior
+variação, o que pode indicar instabilidade financeira.
 
-As análises de qui-quadrado entre as variáveis categóricas reforçam essas observações. O teste de associação entre a mistura de crédito (Credit_Mix) e a classificação de crédito (Credit_Score) resultou em um valor de X² de 14.606 com um p-valor extremamente significativo (< 2,2e-16), indicando uma forte associação entre essas variáveis. Isso sugere que a composição do crédito do cliente tem uma influência considerável sobre sua classificação de crédito. De forma similar, o teste de qui-quadrado entre o pagamento do valor mínimo (Payment_of_Min_Amount) e a classificação de crédito também mostrou uma associação significativa (X² = 14.578, p < 2,2e-16), sugerindo que clientes que não pagam o valor mínimo regularmente têm maior probabilidade de serem classificados como "Poor". Esses resultados preliminares fornecem evidências robustas de que variáveis financeiras e comportamentais desempenham um papel crucial na determinação do risco de crédito, justificando sua inclusão no modelo de regressão logística subsequente.
+As análises de qui-quadrado entre as variáveis categóricas reforçam
+essas observações. O teste de associação entre a mistura de crédito
+(Credit_Mix) e a classificação de crédito (Credit_Score) resultou em um
+valor de X² de 14.606 com um p-valor extremamente significativo (\<
+2,2e-16), indicando uma forte associação entre essas variáveis. Isso
+sugere que a composição do crédito do cliente tem uma influência
+considerável sobre sua classificação de crédito. De forma similar, o
+teste de qui-quadrado entre o pagamento do valor mínimo
+(Payment_of_Min_Amount) e a classificação de crédito também mostrou uma
+associação significativa (X² = 14.578, p \< 2,2e-16), sugerindo que
+clientes que não pagam o valor mínimo regularmente têm maior
+probabilidade de serem classificados como "Poor". Esses resultados
+preliminares fornecem evidências robustas de que variáveis financeiras e
+comportamentais desempenham um papel crucial na determinação do risco de
+crédito, justificando sua inclusão no modelo de regressão logística
+subsequente.
 
 ### Modelo logístico ajustado
 
-O modelo de regressão logística ajustado para classificar o crédito dos clientes foi desenvolvido utilizando  A função de link utilizada foi a logit, adequada para a análise de variáveis binárias como o Credit_Score. 
+O modelo de regressão logística ajustado para classificar o crédito dos
+clientes foi desenvolvido utilizando A função de link utilizada foi a
+logit, adequada para a análise de variáveis binárias como o
+Credit_Score.
 
-Além disso, para a construção do modelo foram utilizadas as seguintes variáveis: 
+Além disso, para a construção do modelo foram utilizadas as seguintes
+variáveis:
 
 ```{r}
 # Ajuste do modelo de regressão logística
@@ -976,14 +1100,36 @@ kable(tabela_formatada, caption = "Resultados do Modelo de Regressão Logística
 
 ```
 
-Os coeficientes do modelo são significativos, com valores de 
-p inferiores a 0,05 para todas as variáveis, indicando que elas têm uma contribuição estatisticamente significativa na previsão da classificação de crédito. 
+Os coeficientes do modelo são significativos, com valores de p
+inferiores a 0,05 para todas as variáveis, indicando que elas têm uma
+contribuição estatisticamente significativa na previsão da classificação
+de crédito.
 
-Aqui, o intercepto é −1.485, enquanto os coeficientes para as variáveis Credit_MixStandard e Credit_MixBad são positivos e relativamente altos, o que sugere um efeito significativo na probabilidade de um cliente ser classificado como "Good". Outstanding_Debt e Payment_of_Min_AmountYes também apresentam coeficientes positivos, refletindo seu impacto positivo na probabilidade de uma boa classificação de crédito. O coeficiente de Changed_Credit_Limit é negativo, indicando que um aumento no limite de crédito alterado está associado a uma menor probabilidade de classificação positiva.
+Aqui, o intercepto é −1.485, enquanto os coeficientes para as variáveis
+Credit_MixStandard e Credit_MixBad são positivos e relativamente altos,
+o que sugere um efeito significativo na probabilidade de um cliente ser
+classificado como "Good". Outstanding_Debt e Payment_of_Min_AmountYes
+também apresentam coeficientes positivos, refletindo seu impacto
+positivo na probabilidade de uma boa classificação de crédito. O
+coeficiente de Changed_Credit_Limit é negativo, indicando que um aumento
+no limite de crédito alterado está associado a uma menor probabilidade
+de classificação positiva.
 
-O modelo apresenta um desvio nulo de 42604 e um desvio residual de 24833. A redução no desvio residual em relação ao desvio nulo indica que o modelo com as variáveis independentes tem um ajuste significativamente melhor do que o modelo nulo. Em outras palavras, o modelo ajustado reduz a discrepância entre os valores previstos e os observados de forma significativa.
+O modelo apresenta um desvio nulo de 42604 e um desvio residual de
+24833. A redução no desvio residual em relação ao desvio nulo indica que
+o modelo com as variáveis independentes tem um ajuste significativamente
+melhor do que o modelo nulo. Em outras palavras, o modelo ajustado reduz
+a discrepância entre os valores previstos e os observados de forma
+significativa.
 
-Quanto ao AIC, vale salientar que O AIC é uma métrica que ajuda a avaliar a qualidade do ajuste do modelo, levando em consideração tanto a complexidade quanto a adequação ao conjunto de dados. A principal função do AIC é penalizar modelos mais complexos, que possuem um maior número de parâmetros, para evitar o ajuste excessivo aos dados (overfitting).No caso, o AIC obtido foi de 24845. Para determinar se este valor indica um bom ajuste do modelo, é necessário compará-lo com o AIC de outros modelos que você pode ter testado. 
+Quanto ao AIC, vale salientar que O AIC é uma métrica que ajuda a
+avaliar a qualidade do ajuste do modelo, levando em consideração tanto a
+complexidade quanto a adequação ao conjunto de dados. A principal função
+do AIC é penalizar modelos mais complexos, que possuem um maior número
+de parâmetros, para evitar o ajuste excessivo aos dados (overfitting).No
+caso, o AIC obtido foi de 24845. Para determinar se este valor indica um
+bom ajuste do modelo, é necessário compará-lo com o AIC de outros
+modelos que você pode ter testado.
 
 Para o modelo ajustado foi calculado também a razão de chances:
 
@@ -1000,7 +1146,23 @@ kable(or_table, caption = "Razões de Chances (Odds Ratios) do Modelo de Regress
 
 ```
 
-As razões de chances (odds ratios) para o modelo de regressão logística ajustado fornecem uma visão sobre como cada variável preditora afeta a probabilidade de uma boa classificação de crédito. As variáveis "Credit_MixStandard" e "Credit_MixBad" têm odds ratios de aproximadamente 2.75 e 10.43, respectivamente, indicando que os indivíduos com essas classificações de crédito têm odds significativamente maiores de obter uma boa classificação em comparação com a categoria de referência. O valor da dívida pendente ("Outstanding_Debt") tem um odds ratio próximo de 1, sugerindo que sua influência nas odds é mínima. Por outro lado, pagar o valor mínimo requerido ("Payment_of_Min_AmountYes") aumenta as odds de uma boa classificação de crédito em cerca de 4.15 vezes. O limite de crédito alterado ("Changed_Credit_Limit") tem um odds ratio de 0.98, indicando uma leve diminuição nas odds de uma boa classificação com cada unidade adicional de alteração no limite de crédito. Esses resultados ajudam a entender a importância relativa de cada variável na previsão da classificação de crédito.
+As razões de chances (odds ratios) para o modelo de regressão logística
+ajustado fornecem uma visão sobre como cada variável preditora afeta a
+probabilidade de uma boa classificação de crédito. As variáveis
+"Credit_MixStandard" e "Credit_MixBad" têm odds ratios de
+aproximadamente 2.75 e 10.43, respectivamente, indicando que os
+indivíduos com essas classificações de crédito têm odds
+significativamente maiores de obter uma boa classificação em comparação
+com a categoria de referência. O valor da dívida pendente
+("Outstanding_Debt") tem um odds ratio próximo de 1, sugerindo que sua
+influência nas odds é mínima. Por outro lado, pagar o valor mínimo
+requerido ("Payment_of_Min_AmountYes") aumenta as odds de uma boa
+classificação de crédito em cerca de 4.15 vezes. O limite de crédito
+alterado ("Changed_Credit_Limit") tem um odds ratio de 0.98, indicando
+uma leve diminuição nas odds de uma boa classificação com cada unidade
+adicional de alteração no limite de crédito. Esses resultados ajudam a
+entender a importância relativa de cada variável na previsão da
+classificação de crédito.
 
 Tentamos ajustar o modelo logistico, re-escalando Outstanding Debt:
 
@@ -1037,12 +1199,27 @@ kable(tabela_formatada, caption = "Resultados do Modelo de Regressão Logística
 
 ```
 
-Visando verificar se é possível melhorar o modelo logístico ajustado, a variável Outstanding_Debt foi recalibrada. No modelo anterior, o coeficiente para Outstanding_Debt era muito pequeno (6.567e-04), enquanto no modelo ajustado com a variável escalada (Outstanding_Debt_scaled), a estimativa do coeficiente foi significativamente maior (0.065672), indicando um efeito mais expressivo da variável escalada. No entanto, apesar de a escalagem ter melhorado a interpretação dos coeficientes, os desvios nulo e residual, assim como o AIC, permaneceram inalterados (o AIC é 24845 para ambos os modelos). Isso sugere que, embora a escalagem tenha proporcionado coeficientes mais interpretáveis, ela não resultou em uma melhoria no ajuste global do modelo.
+Visando verificar se é possível melhorar o modelo logístico ajustado, a
+variável Outstanding_Debt foi recalibrada. No modelo anterior, o
+coeficiente para Outstanding_Debt era muito pequeno (6.567e-04),
+enquanto no modelo ajustado com a variável escalada
+(Outstanding_Debt_scaled), a estimativa do coeficiente foi
+significativamente maior (0.065672), indicando um efeito mais expressivo
+da variável escalada. No entanto, apesar de a escalagem ter melhorado a
+interpretação dos coeficientes, os desvios nulo e residual, assim como o
+AIC, permaneceram inalterados (o AIC é 24845 para ambos os modelos).
+Isso sugere que, embora a escalagem tenha proporcionado coeficientes
+mais interpretáveis, ela não resultou em uma melhoria no ajuste global
+do modelo.
 
 ### Análise dos Resíduos
 
-A análise dos resíduos é crucial para avaliar se o modelo logístico está bem ajustado. Resíduos bem comportados, ou seja, sem padrões claros e distribuídos de forma aleatória, indicam que o modelo é adequado. Se houver padrões nos resíduos, isso pode sugerir que o modelo não está capturando toda a variabilidade dos dados, podendo haver variáveis importantes faltantes ou problemas de especificação do modelo
-
+A análise dos resíduos é crucial para avaliar se o modelo logístico está
+bem ajustado. Resíduos bem comportados, ou seja, sem padrões claros e
+distribuídos de forma aleatória, indicam que o modelo é adequado. Se
+houver padrões nos resíduos, isso pode sugerir que o modelo não está
+capturando toda a variabilidade dos dados, podendo haver variáveis
+importantes faltantes ou problemas de especificação do modelo
 
 ```{r}
 
@@ -1058,7 +1235,6 @@ bptest(out)
 dw_test2 <- dwtest(out)
 
 ```
-
 
 ```{r}
 # Carregar pacotes necessários
@@ -1083,23 +1259,44 @@ kable(test_results, caption = "Resultados dos Testes Breusch-Pagan e Durbin-Wats
 
 ```
 
-Com base nos resultados obtidos via Teste de Breusch-Pagan e Teste de Durbin-Watson, podemos concluir o seguinte sobre o ajuste do modelo de regressão logística:
+Com base nos resultados obtidos via Teste de Breusch-Pagan e Teste de
+Durbin-Watson, podemos concluir o seguinte sobre o ajuste do modelo de
+regressão logística:
 
-**Homocedasticidade:** - O Teste de Breusch-Pagan resultou em um valor de BP = 3931.9 com um valor-p < 2.2e-16. Esse valor-p extremamente baixo indica que rejeitamos a hipótese nula de homocedasticidade. Em outras palavras, há evidências significativas de heterocedasticidade nos resíduos do modelo. Isso sugere que a variância dos resíduos não é constante ao longo dos valores preditores, o que pode indicar que o modelo não está capturando completamente a variabilidade dos dados.
+**Homocedasticidade:** - O Teste de Breusch-Pagan resultou em um valor
+de BP = 3931.9 com um valor-p \< 2.2e-16. Esse valor-p extremamente
+baixo indica que rejeitamos a hipótese nula de homocedasticidade. Em
+outras palavras, há evidências significativas de heterocedasticidade nos
+resíduos do modelo. Isso sugere que a variância dos resíduos não é
+constante ao longo dos valores preditores, o que pode indicar que o
+modelo não está capturando completamente a variabilidade dos dados.
 
-**Independência dos Resíduos:** - O Teste de Durbin-Watson forneceu um valor de DW = 0.65232 com um valor-p < 2.2e-16, indicando uma forte presença de autocorrelação positiva nos resíduos. Isso sugere que os resíduos não são independentes entre si, o que pode indicar que o modelo não está capturando todos os padrões nos dados ou que há uma estrutura de dependência não modelada.
+**Independência dos Resíduos:** - O Teste de Durbin-Watson forneceu um
+valor de DW = 0.65232 com um valor-p \< 2.2e-16, indicando uma forte
+presença de autocorrelação positiva nos resíduos. Isso sugere que os
+resíduos não são independentes entre si, o que pode indicar que o modelo
+não está capturando todos os padrões nos dados ou que há uma estrutura
+de dependência não modelada.
 
-A inspeção do gráfico de resíduos versus valores ajustados também pode revelar padrões adicionais que confirmem a presença de autocorrelação.
+A inspeção do gráfico de resíduos versus valores ajustados também pode
+revelar padrões adicionais que confirmem a presença de autocorrelação.
 
-**Linearidade:** - Há um padrão claro nos resíduos plotados em relação aos valores ajustados, indicando não linearidade entre as variáveis independentes e dependentes.
+**Linearidade:** - Há um padrão claro nos resíduos plotados em relação
+aos valores ajustados, indicando não linearidade entre as variáveis
+independentes e dependentes.
 
-Desse modo, os resultados sugerem que o modelo enfrenta problemas de heterocedasticidade e autocorrelação positiva dos resíduos, o que pode impactar a precisão e a validade do modelo. 
-
+Desse modo, os resultados sugerem que o modelo enfrenta problemas de
+heterocedasticidade e autocorrelação positiva dos resíduos, o que pode
+impactar a precisão e a validade do modelo.
 
 ### Análise do VIF (Variance Inflation Factor)
 
-O VIF (Fator de Inflação da Variância) é uma medida importante para identificar a presença de multicolinearidade entre os preditores em um modelo de regressão. Valores elevados de VIF sugerem que um preditor está altamente correlacionado com outros preditores no modelo, o que pode inflacionar os erros padrão das estimativas dos coeficientes e dificultar a identificação da real significância das variáveis.
-
+O VIF (Fator de Inflação da Variância) é uma medida importante para
+identificar a presença de multicolinearidade entre os preditores em um
+modelo de regressão. Valores elevados de VIF sugerem que um preditor
+está altamente correlacionado com outros preditores no modelo, o que
+pode inflacionar os erros padrão das estimativas dos coeficientes e
+dificultar a identificação da real significância das variáveis.
 
 ```{r}
 # Resultados do VIF
@@ -1116,7 +1313,6 @@ kable(vif_results, caption = "VIF dos Preditores") %>%
 
 ```
 
-
 ```{r}
 # Resultados dos erros padrão dos coeficientes
 errors_std_results <- data.frame(
@@ -1132,10 +1328,36 @@ kable(errors_std_results, caption = "Erros Padrão dos Coeficientes") %>%
   kable_styling(full_width = F, position = "center")
 ```
 
-No modelo analisado, observamos que as variáveis Credit_Mix e Payment_of_Min_Amount têm VIFs relativamente altos, com valores de 5.41 e 5.50, respectivamente. Esses valores indicam uma alta colinearidade com outras variáveis do modelo. Isso é corroborado pelos erros padrão dos coeficientes: Credit_MixStandard e Credit_MixBad apresentam erros padrão elevados, especialmente Credit_MixBad com um erro padrão de 0.1036, o que sugere que as estimativas dos coeficientes para estas variáveis são menos precisas e podem ser afetadas pela multicolinearidade.
+No modelo analisado, observamos que as variáveis Credit_Mix e
+Payment_of_Min_Amount têm VIFs relativamente altos, com valores de 5.41
+e 5.50, respectivamente. Esses valores indicam uma alta colinearidade
+com outras variáveis do modelo. Isso é corroborado pelos erros padrão
+dos coeficientes: Credit_MixStandard e Credit_MixBad apresentam erros
+padrão elevados, especialmente Credit_MixBad com um erro padrão de
+0.1036, o que sugere que as estimativas dos coeficientes para estas
+variáveis são menos precisas e podem ser afetadas pela
+multicolinearidade.
 
-Em contraste, Outstanding_Debt e Changed_Credit_Limit têm VIFs baixos, de 1.63 e 1.56, respectivamente. Isso sugere que estas variáveis têm baixa colinearidade com outras variáveis do modelo. O erro padrão para Outstanding_Debt é extremamente pequeno (aproximadamente 0.0000), indicando uma estimativa muito precisa para o coeficiente desta variável. Da mesma forma, Changed_Credit_Limit tem um erro padrão muito pequeno (0.0037), o que também sugere uma estimativa precisa para o coeficiente desta variável.
+Em contraste, Outstanding_Debt e Changed_Credit_Limit têm VIFs baixos,
+de 1.63 e 1.56, respectivamente. Isso sugere que estas variáveis têm
+baixa colinearidade com outras variáveis do modelo. O erro padrão para
+Outstanding_Debt é extremamente pequeno (aproximadamente 0.0000),
+indicando uma estimativa muito precisa para o coeficiente desta
+variável. Da mesma forma, Changed_Credit_Limit tem um erro padrão muito
+pequeno (0.0037), o que também sugere uma estimativa precisa para o
+coeficiente desta variável.
 
-Por outro lado, o erro padrão para Payment_of_Min_AmountYes é relativamente grande (0.0805), o que pode refletir a alta multicolinearidade observada pelo VIF elevado para Payment_of_Min_Amount. Isso indica que a estimativa do coeficiente para esta variável pode ser menos confiável.
+Por outro lado, o erro padrão para Payment_of_Min_AmountYes é
+relativamente grande (0.0805), o que pode refletir a alta
+multicolinearidade observada pelo VIF elevado para
+Payment_of_Min_Amount. Isso indica que a estimativa do coeficiente para
+esta variável pode ser menos confiável.
 
-Em resumo, a alta multicolinearidade identificada para Credit_Mix e Payment_of_Min_Amount está associada a erros padrão mais altos para essas variáveis, o que sugere que as estimativas dos coeficientes podem ser imprecisas. Em contraste, variáveis com VIFs baixos como Outstanding_Debt e Changed_Credit_Limit apresentam erros padrão menores e estimativas mais confiáveis. Considerar a remoção ou ajuste das variáveis com alta colinearidade pode melhorar a precisão e robustez do modelo.
+Em resumo, a alta multicolinearidade identificada para Credit_Mix e
+Payment_of_Min_Amount está associada a erros padrão mais altos para
+essas variáveis, o que sugere que as estimativas dos coeficientes podem
+ser imprecisas. Em contraste, variáveis com VIFs baixos como
+Outstanding_Debt e Changed_Credit_Limit apresentam erros padrão menores
+e estimativas mais confiáveis. Considerar a remoção ou ajuste das
+variáveis com alta colinearidade pode melhorar a precisão e robustez do
+modelo.

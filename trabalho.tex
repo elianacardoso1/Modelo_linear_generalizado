@@ -254,23 +254,21 @@ normal pode não captar.
 
 \section{Modelo Linear Normal}\label{modelo-linear-normal}
 
-\begin{longtable}[]{@{}lrrr@{}}
+\begin{longtable}[t]{l>{\raggedleft\arraybackslash}p{17em}rr}
 
 \caption{\label{tbl-t1}Tabela Resumo das Variáveis Y, L e K.}
 
 \tabularnewline
 
-\toprule\noalign{}
-& K & L & Y \\
-\midrule\noalign{}
-\endhead
-\bottomrule\noalign{}
-\endlastfoot
-Mean & 3058761.263 & 54.6094443 & 769941.411 \\
-Std.Dev & 8413105.576 & 196.3877082 & 2264112.549 \\
-Min & 7345.099 & 0.2993725 & 2569.155 \\
-Median & 394840.953 & 11.6562212 & 123419.395 \\
-Max & 64118472.000 & 2045.9122435 & 18244220.000 \\
+\toprule
+ & K & L & Y\\
+\midrule
+Mean & 3058761.263 & 54.6094443 & 769941.411\\
+Std.Dev & 8413105.576 & 196.3877082 & 2264112.549\\
+Min & 7345.099 & 0.2993725 & 2569.155\\
+Median & 394840.953 & 11.6562212 & 123419.395\\
+Max & 64118472.000 & 2045.9122435 & 18244220.000\\
+\bottomrule
 
 \end{longtable}
 
@@ -355,11 +353,11 @@ nos permite realizar inferências estatísticas mais confiáveis e
 interpretar os efeitos das variáveis independentes sobre o PIB Nacional
 de forma mais precisa.
 
-\includegraphics{trabalho_files/figure-pdf/unnamed-chunk-8-1.pdf}
-
 \includegraphics{trabalho_files/figure-pdf/unnamed-chunk-9-1.pdf}
 
 \includegraphics{trabalho_files/figure-pdf/unnamed-chunk-10-1.pdf}
+
+\includegraphics{trabalho_files/figure-pdf/unnamed-chunk-11-1.pdf}
 
 Essa estratégia de transformação aumenta a robustez da análise, pois
 reduz a influência de valores extremos e torna os resultados menos
@@ -441,23 +439,21 @@ logaritmo.
   constantes à escala.
 \end{itemize}
 
-\begin{longtable}[]{@{}lr@{}}
+\begin{longtable}[t]{l>{\raggedleft\arraybackslash}p{17em}}
 
 \caption{\label{tbl-teste1}Teste}
 
 \tabularnewline
 
-\toprule\noalign{}
-Estatística & Valor \\
-\midrule\noalign{}
-\endhead
-\bottomrule\noalign{}
-\endlastfoot
-Estimativa de alpha & 0.2941 \\
-Estimativa de beta & 0.7073 \\
-Soma de alpha e beta & 1.0014 \\
-Estatística t & 0.0721 \\
-Valor-p & 0.9427 \\
+\toprule
+Estatística & Valor\\
+\midrule
+Estimativa de alpha & 0.2941\\
+Estimativa de beta & 0.7073\\
+Soma de alpha e beta & 1.0014\\
+Estatística t & 0.0721\\
+Valor-p & 0.9427\\
+\bottomrule
 
 \end{longtable}
 
@@ -487,8 +483,8 @@ produção Cobb-Douglas.
 
 \end{figure}%
 
-\begin{longtable}[t]{llr}
-\caption{\label{tab:unnamed-chunk-14}Resultados dos Testes de Resíduos}\\
+\begin{longtable}[t]{l>{\raggedright\arraybackslash}p{17em}r}
+\caption{\label{tab:unnamed-chunk-16}Resultados dos Testes de Resíduos}\\
 \toprule
 Teste & Estatística & p.valor\\
 \midrule
@@ -577,23 +573,21 @@ Isso sugere que o modelo gamma log-linear está capturando bem a
 dispersão dos dados, com pouca heterogeneidade residual não explicada
 pelo modelo.
 
-\begin{longtable}[]{@{}ll@{}}
+\begin{longtable}[t]{l>{\raggedright\arraybackslash}p{17em}}
 
 \caption{\label{tbl-teste}Teste}
 
 \tabularnewline
 
-\toprule\noalign{}
-Descrição & Valor \\
-\midrule\noalign{}
-\endhead
-\bottomrule\noalign{}
-\endlastfoot
-Soma de alpha e beta & 0.0838 \\
-Erro padrão & 0.0019 \\
-Estatística t & -483.1625 \\
-Valor-p & 7.4303651624535e-229 \\
-Decisão & Rejeitamos H0 \\
+\toprule
+Descrição & Valor\\
+\midrule
+Soma de alpha e beta & 0.0838\\
+Erro padrão & 0.0019\\
+Estatística t & -483.1625\\
+Valor-p & 7.4303651624535e-229\\
+Decisão & Rejeitamos H0\\
+\bottomrule
 
 \end{longtable}
 
@@ -621,10 +615,20 @@ diminui, levando a um crescimento menos eficiente da produção.
 
 \subsection{Análise dos Resíduos}\label{anuxe1lise-dos-resuxedduos-1}
 
-\includegraphics{trabalho_files/figure-pdf/Gráfico de Análise de resíduos-1.pdf}
+\begin{table}
 
-\begin{longtable}[t]{lrrl}
-\caption{\label{tab:unnamed-chunk-23}Resultados dos Testes de Breusch-Pagan e Durbin-Watson}\\
+\caption{\label{tbl-gamma1}Gráfico de Análise de resíduos}
+
+\centering{
+
+\includegraphics{trabalho_files/figure-pdf/tbl-gamma1-1.pdf}
+
+}
+
+\end{table}%
+
+\begin{longtable}[t]{l>{\raggedleft\arraybackslash}p{17em}rl}
+\caption{\label{tab:unnamed-chunk-25}Resultados dos Testes de Breusch-Pagan e Durbin-Watson}\\
 \toprule
 Teste & Estatística & Valor.p & Decisão\\
 \midrule
@@ -651,8 +655,8 @@ aproximar que os resíduos estão próximos de uma distribuição normal.
 
 \textbf{Independência dos Resíduos:} - Tanto o teste de Durbin-Watson
 quanto a inspeção do gráfico de resíduos versus valores ajustados na
-tabela \textbf{?@tbl-gamma1} não fornecem evidências significativas para
-rejeitar a hipótese nula de ausência de autocorrelação positiva ou
+tabela Tabela~\ref{tbl-gamma1} não fornecem evidências significativas
+para rejeitar a hipótese nula de ausência de autocorrelação positiva ou
 negativa nos resíduos. Assim, parece que os resíduos são independentes
 entre si, o que é uma boa indicação de que o modelo está adequadamente
 ajustado quanto a essa suposição.
@@ -664,22 +668,15 @@ variáveis independentes e dependentes.
 \section{Comparação dos Modelos: Gamma Log-Linear vs.~Modelo
 Normal}\label{comparauxe7uxe3o-dos-modelos-gamma-log-linear-vs.-modelo-normal}
 
-\begin{longtable}[]{@{}lrr@{}}
-\caption{Comparação dos Modelos Gamma Log-Linear e
-Normal}\tabularnewline
-\toprule\noalign{}
-Critério & Modelo.Gamma.Log.Linear & Modelo.Normal \\
-\midrule\noalign{}
-\endfirsthead
-\toprule\noalign{}
-Critério & Modelo.Gamma.Log.Linear & Modelo.Normal \\
-\midrule\noalign{}
-\endhead
-\bottomrule\noalign{}
-\endlastfoot
-Log-Likelihood & -83.07791 & -59.39108 \\
-AIC & 174.15580 & 126.78220 \\
-BIC & 186.03510 & 138.66140 \\
+\begin{longtable}[t]{l>{\raggedleft\arraybackslash}p{17em}r}
+\caption{\label{tab:unnamed-chunk-29}Comparação dos Modelos Gamma Log-Linear e Normal}\\
+\toprule
+Critério & Modelo.Gamma.Log.Linear & Modelo.Normal\\
+\midrule
+Log-Likelihood & -83.07791 & -59.39108\\
+AIC & 174.15580 & 126.78220\\
+BIC & 186.03510 & 138.66140\\
+\bottomrule
 \end{longtable}
 
 Log-Likelihood (Log-Verossimilhança) - \textbf{Modelo Gamma Log-Linear}:
@@ -737,7 +734,7 @@ dependente é categórica, como a classificação de crédito (``Poor'' e
 evento binário ocorrer e classifica as observações em categorias. A
 equação do modelo logístico é expressa como:
 
-\[log(p / (1 - p)) = β0 + β1 * X1 + β2 * X2 + ... + βp * Xp\]
+\[log(p / (1 - p)) = β0 + β1 * X_1 + β2 * X_2 + ... + βp * X_p\]
 
 Onde:
 
@@ -761,7 +758,7 @@ Como parte da análise, será explorado o ajuste do modelo, avaliando os
 resíduos para verificar a adequação do modelo.
 
 \begin{longtable}[t]{l>{\raggedright\arraybackslash}p{17em}}
-\caption{\label{tab:unnamed-chunk-30}Resumo Descritivo das Variáveis}\\
+\caption{\label{tab:unnamed-chunk-32}Resumo Descritivo das Variáveis}\\
 \toprule
 Variável & Estatística\\
 \midrule
@@ -791,12 +788,12 @@ do tempo. Essas observações iniciais são fundamentais para a construção
 do modelo de regressão logística e devem orientar a escolha de variáveis
 e a interpretação dos resultados.
 
-\includegraphics{trabalho_files/figure-pdf/unnamed-chunk-31-1.pdf}
+\includegraphics{trabalho_files/figure-pdf/unnamed-chunk-33-1.pdf}
 
-\includegraphics{trabalho_files/figure-pdf/unnamed-chunk-31-2.pdf}
+\includegraphics{trabalho_files/figure-pdf/unnamed-chunk-33-2.pdf}
 
 \begin{longtable}[t]{lrrll}
-\caption{\label{tab:unnamed-chunk-32}Resultados dos Testes Qui-Quadrado}\\
+\caption{\label{tab:unnamed-chunk-34}Resultados dos Testes Qui-Quadrado}\\
 \toprule
 Teste & Estatística & Graus.de.Liberdade & Valor.p & Decisão\\
 \midrule
@@ -845,7 +842,7 @@ Além disso, para a construção do modelo foram utilizadas as seguintes
 variáveis:
 
 \begin{longtable}[t]{lrrl}
-\caption{\label{tab:unnamed-chunk-33}Resultados do Modelo de Regressão Logística}\\
+\caption{\label{tab:unnamed-chunk-35}Resultados do Modelo de Regressão Logística}\\
 \toprule
 Variável & Estimacao & ErroPadrao & Pvalor\\
 \midrule
@@ -934,7 +931,7 @@ classificação de crédito.
 Tentamos ajustar o modelo logistico, re-escalando Outstanding Debt:
 
 \begin{longtable}[t]{lrrl}
-\caption{\label{tab:unnamed-chunk-35}Resultados do Modelo de Regressão Logística}\\
+\caption{\label{tab:unnamed-chunk-37}Resultados do Modelo de Regressão Logística}\\
 \toprule
 Variável & Estimacao & ErroPadrao & Pvalor\\
 \midrule
@@ -970,10 +967,10 @@ houver padrões nos resíduos, isso pode sugerir que o modelo não está
 capturando toda a variabilidade dos dados, podendo haver variáveis
 importantes faltantes ou problemas de especificação do modelo
 
-\includegraphics{trabalho_files/figure-pdf/unnamed-chunk-36-1.pdf}
+\includegraphics{trabalho_files/figure-pdf/unnamed-chunk-38-1.pdf}
 
 \begin{longtable}[t]{llll}
-\caption{\label{tab:unnamed-chunk-38}Resultados dos Testes Breusch-Pagan e Durbin-Watson}\\
+\caption{\label{tab:unnamed-chunk-40}Resultados dos Testes Breusch-Pagan e Durbin-Watson}\\
 \toprule
 Teste & Estatistica & Graus\_de\_Liberdade & P\_valor\\
 \midrule
@@ -1024,7 +1021,7 @@ pode inflacionar os erros padrão das estimativas dos coeficientes e
 dificultar a identificação da real significância das variáveis.
 
 \begin{longtable}[t]{lrrr}
-\caption{\label{tab:unnamed-chunk-39}VIF dos Preditores}\\
+\caption{\label{tab:unnamed-chunk-41}VIF dos Preditores}\\
 \toprule
 Preditor & GVIF & Df & Ajuste.do.GVIF\\
 \midrule
@@ -1036,7 +1033,7 @@ Changed\_Credit\_Limit & 1.558789 & 1 & 1.248515\\
 \end{longtable}
 
 \begin{longtable}[t]{lr}
-\caption{\label{tab:unnamed-chunk-40}Erros Padrão dos Coeficientes}\\
+\caption{\label{tab:unnamed-chunk-42}Erros Padrão dos Coeficientes}\\
 \toprule
 Coeficiente & Erro\_Padrão\\
 \midrule
